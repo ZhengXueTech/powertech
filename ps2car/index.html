@@ -167,16 +167,10 @@
     .topbar,.hero-actions .btn.ghost,.done{display:none}
     details.faq{break-inside:avoid}
   }
-
-  /* 回 PowerTech 工具箱 */
-  .pt-back{display:inline-flex;align-items:center;gap:4px;margin:10px 0 0 14px;padding:6px 12px;border-radius:999px;
-    font-size:14px;text-decoration:none;color:var(--accent);background:var(--accent-soft);font-family:inherit;position:relative;z-index:5}
-  .pt-back:hover{filter:brightness(1.05)}
 </style>
 </head>
 <body>
-<a class="pt-back" href="../">‹ PowerTech 工具箱</a>
-
+<a href="../" class="pt-back" style="display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin:10px 16px 0;padding:6px 12px;border:1px solid #c9d2c5;border-radius:999px;background:#fff;color:#16211c;font:600 .8rem/1.2 system-ui,'Noto Sans TC',sans-serif;text-decoration:none;width:fit-content;" title="回到 PowerTech 工具箱">‹ 回工具箱</a>
 <div class="wrap">
 
   <header class="hero">
@@ -310,6 +304,7 @@
       <h2>貼進 PS2Car.ino 並上傳到控制板</h2>
       <label class="done"><input type="checkbox"> 我完成了</label>
     </div>
+    <div class="note tip"><b class="t">💡 不想自己設計？</b><p>工具包裡的 <code>examples</code> 資料夾有兩份現成、可以直接上傳的專案：<code>PS2Car_normal</code>（一般版）和 <code>PS2Car_breathing</code>（呼吸燈車號版）。用 Arduino IDE 開啟裡面的 .ino 就能用，檔案最上方有中文說明。</p></div>
     <ol class="steps">
       <li>打開 Arduino IDE，選單「<b>檔案 → 開啟</b>」，選到 <code>PS2Car</code> 資料夾裡的 <code>PS2Car.ino</code>。</li>
       <li>在程式編輯區按 <kbd>Ctrl</kbd>+<kbd>A</kbd> 全選，按 <kbd>Delete</kbd> 刪掉原本內容，再按 <kbd>Ctrl</kbd>+<kbd>V</kbd> 貼上剛剛複製的程式碼，存檔（<kbd>Ctrl</kbd>+<kbd>S</kbd>）。<br><span style="color:var(--ink-faint)">（如果你是下載成檔案，打開後全選複製，貼進 <code>PS2Car.ino</code> 一樣的做法。）</span></li>
@@ -500,7 +495,7 @@
     if(DOWNLOAD_URL){
       btn.href = DOWNLOAD_URL; btn.setAttribute("download","PS2_Car_tool_efun.zip"); btn.removeAttribute("target");
       btn.textContent = "⬇ 下載工具包（PS2_Car_tool_efun.zip）";
-      note.textContent = "檔案約 70 KB，下載後請先「全部解壓縮」再使用。";
+      note.textContent = "檔案約 0.2 MB，下載後請先「全部解壓縮」再使用。";
     }else{
       btn.setAttribute("aria-disabled","true");
       btn.removeAttribute("target");
