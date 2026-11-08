@@ -546,6 +546,8 @@ render();
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   navigator.serviceWorker.register('../sw.js').catch(e => console.warn('SW 註冊失敗', e));
 }
+// 要求瀏覽器永久保存離線檔案，降低被系統自動清除的機率
+try { navigator.storage?.persist?.(); } catch (e) {}
 </script>
 </body>
 </html>
