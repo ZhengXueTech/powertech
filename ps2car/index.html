@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS2 小車安裝與使用指南</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2430; --ink-soft:#4b5666; --ink-faint:#7a8494;
+    --line:#dfe3ea; --accent:#1f6feb; --accent-ink:#ffffff; --accent-soft:#e7f0ff;
+    --tip-bg:#e9f7ef; --tip-line:#9bd5b3; --warn-bg:#fff4e0; --warn-line:#f0c37a; --bad-bg:#fdecec; --bad-line:#eba4a4;
+    --code-bg:#eef1f5; --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.05);
+    --led-purple:#a24df0; --led-red:#f0413a; --led-green:#22c55e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161c; --card:#1b212a; --ink:#e8ecf2; --ink-soft:#b3bccb; --ink-faint:#8791a1;
+      --line:#2b3340; --accent:#5b9bff; --accent-ink:#0b1220; --accent-soft:#1d2a40;
+      --tip-bg:#16291f; --tip-line:#2f6b4a; --warn-bg:#2d2412; --warn-line:#7a5a1f; --bad-bg:#2e1818; --bad-line:#7a3434;
+      --code-bg:#252c37; --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161c; --card:#1b212a; --ink:#e8ecf2; --ink-soft:#b3bccb; --ink-faint:#8791a1;
+    --line:#2b3340; --accent:#5b9bff; --accent-ink:#0b1220; --accent-soft:#1d2a40;
+    --tip-bg:#16291f; --tip-line:#2f6b4a; --warn-bg:#2d2412; --warn-line:#7a5a1f; --bad-bg:#2e1818; --bad-line:#7a3434;
+    --code-bg:#252c37; --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.8; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:0 16px 56px}
+  a{color:var(--accent)}
+  h1,h2,h3{line-height:1.35; margin:0}
+  p{margin:.6em 0}
+  code,kbd{
+    font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:.9em;
+    background:var(--code-bg); padding:.1em .4em; border-radius:5px; word-break:break-all;
+  }
+  kbd{border:1px solid var(--line); border-bottom-width:2px}
+
+  /* hero */
+  .hero{padding:28px 0 8px}
+  .eyebrow{font-size:.85rem; color:var(--ink-faint); letter-spacing:.04em}
+  .hero h1{font-size:clamp(1.55rem,4.6vw,2.1rem); margin:.2em 0 .35em}
+  .hero p.lead{color:var(--ink-soft); margin:0 0 16px; max-width:40em}
+  .hero-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 20px;
+    border-radius:10px; border:1px solid transparent; font-size:1rem; font-weight:600;
+    text-decoration:none; cursor:pointer; font-family:inherit;
+  }
+  .btn.primary{background:var(--accent); color:var(--accent-ink)}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+  .btn[aria-disabled="true"]{background:var(--code-bg); color:var(--ink-faint); cursor:not-allowed; border-color:var(--line)}
+  .hero .meta{font-size:.85rem; color:var(--ink-faint); margin-top:10px}
+
+  /* nav + progress */
+  .topbar{
+    position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--bg) 92%,transparent);
+    backdrop-filter:blur(6px); border-bottom:1px solid var(--line); margin:14px -16px 18px; padding:8px 16px;
+  }
+  .topbar nav{display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+  .topbar nav::-webkit-scrollbar{display:none}
+  .topbar nav a{
+    flex:0 0 auto; text-decoration:none; color:var(--ink-soft); font-size:.88rem;
+    padding:5px 11px; border-radius:999px; border:1px solid var(--line); background:var(--card); white-space:nowrap;
+  }
+  .topbar nav a:hover{color:var(--accent); border-color:var(--accent)}
+  .progress{display:flex; align-items:center; gap:10px; margin-top:8px; font-size:.82rem; color:var(--ink-faint)}
+  .bar{flex:1; height:6px; background:var(--code-bg); border-radius:99px; overflow:hidden}
+  .bar > i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .3s}
+
+  /* overview strip */
+  .strip{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:0 0 22px; padding:0; list-style:none}
+  .strip li{
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 8px; text-align:center;
+    font-size:.88rem; line-height:1.4; box-shadow:var(--shadow);
+  }
+  .strip b{display:block; font-size:1.15rem; color:var(--accent); margin-bottom:2px}
+
+  /* step cards */
+  section.card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 20px 16px;
+    margin:0 0 18px; box-shadow:var(--shadow);
+  }
+  .step-head{display:flex; align-items:center; gap:12px; margin-bottom:6px}
+  .badge{
+    flex:0 0 auto; width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+    display:grid; place-items:center; font-weight:700;
+  }
+  .step-head h2{font-size:1.25rem; flex:1}
+  .done{display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--ink-soft); cursor:pointer; user-select:none; white-space:nowrap}
+  .done input{width:18px; height:18px; accent-color:var(--accent)}
+  h3{font-size:1.05rem; margin:18px 0 4px}
+  ol.steps,ul.plain{padding-left:1.35em; margin:.5em 0}
+  ol.steps li,ul.plain li{margin:.35em 0}
+
+  .note{border-radius:12px; padding:10px 14px; margin:12px 0; border:1px solid; font-size:.95rem}
+  .note b.t{display:block; margin-bottom:2px}
+  .note.tip{background:var(--tip-bg); border-color:var(--tip-line)}
+  .note.warn{background:var(--warn-bg); border-color:var(--warn-line)}
+  .note.bad{background:var(--bad-bg); border-color:var(--bad-line)}
+  .note p{margin:.3em 0}
+
+  pre.tree{
+    background:var(--code-bg); border-radius:12px; padding:12px 14px; overflow-x:auto; font-size:.88rem; line-height:1.6;
+    font-family:ui-monospace,"Cascadia Mono",Consolas,"Noto Sans TC",monospace; margin:10px 0;
+  }
+
+  table{width:100%; border-collapse:collapse; margin:10px 0; font-size:.93rem}
+  th,td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top}
+  th{background:var(--code-bg); font-weight:600}
+  .tablewrap{overflow-x:auto}
+
+  /* LED demo */
+  .led{display:inline-block; width:14px; height:14px; border-radius:50%; vertical-align:-2px; margin-right:6px}
+  .led.p{background:var(--led-purple); box-shadow:0 0 6px var(--led-purple)}
+  .led.r{background:var(--led-red); box-shadow:0 0 8px var(--led-red)}
+  .led.g{background:var(--led-green); box-shadow:0 0 8px var(--led-green)}
+  .flow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:12px 0}
+  .flow .node{
+    display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; background:var(--code-bg);
+    border:1px solid var(--line); font-size:.92rem; line-height:1.4;
+  }
+  .flow .dot{width:22px; height:22px; border-radius:50%; flex:0 0 auto}
+  .dot.p{background:var(--led-purple); box-shadow:0 0 10px var(--led-purple); opacity:.75}
+  .dot.r{background:var(--led-red); box-shadow:0 0 12px var(--led-red)}
+  .dot.g{background:var(--led-green); box-shadow:0 0 12px var(--led-green)}
+  .flow .arrow{color:var(--ink-faint); font-size:1.1rem}
+  .flow .arrow.both{font-size:1.2rem}
+
+  /* mock UI */
+  .mock{border:1px dashed var(--line); border-radius:12px; padding:12px 14px; margin:10px 0; background:var(--bg); font-size:.92rem}
+  .mock .row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .chip{padding:4px 12px; border-radius:999px; border:1px solid var(--line); background:var(--card); font-size:.88rem}
+  .chip.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+  .fakeslider{display:inline-block; width:130px; height:6px; background:var(--line); border-radius:99px; position:relative; vertical-align:middle; margin:0 8px}
+  .fakeslider::after{content:""; position:absolute; left:34%; top:-5px; width:16px; height:16px; background:var(--accent); border-radius:50%}
+
+  details.faq{border:1px solid var(--line); border-radius:12px; background:var(--card); margin:8px 0; padding:0 16px}
+  details.faq summary{cursor:pointer; padding:12px 0; font-weight:600; list-style:none; display:flex; gap:10px; align-items:flex-start}
+  details.faq summary::-webkit-details-marker{display:none}
+  details.faq summary::before{content:"＋"; color:var(--accent); font-weight:700; flex:0 0 auto}
+  details.faq[open] summary::before{content:"－"}
+  details.faq .a{padding:0 0 12px 24px; color:var(--ink-soft)}
+  details.faq .a p:first-child{margin-top:0}
+
+  footer{margin-top:28px; padding-top:14px; border-top:1px solid var(--line); font-size:.85rem; color:var(--ink-faint); text-align:center}
+
+  @media (max-width:640px){
+    body{font-size:16px}
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .strip li:last-child{grid-column:1 / -1}
+    section.card{padding:16px 14px 12px}
+    .step-head{flex-wrap:wrap}
+    .done{margin-left:46px}
+    .flow .arrow{display:none}
+    .flow .node{width:100%}
+  }
+  @media print{
+    .topbar,.hero-actions .btn.ghost,.done{display:none}
+    details.faq{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">新北市立中正國民中學 科技中心</div>
+    <h1>PS2 小車　安裝與使用指南</h1>
+    <p class="lead">用 PS2 手把遙控你的 Arduino 小車。這一頁會帶你從「下載工具包」一路做到「手把能開車」，照著五個步驟走就好，全部完成大約 20～30 分鐘。</p>
+    <div class="hero-actions">
+      <a id="dlBtn" class="btn primary" href="#" target="_blank" rel="noopener">⬇ 下載工具包（PS2_Car_tool_efun.zip）</a>
+      <a class="btn ghost" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">🔧 還沒裝 Arduino IDE？先到這裡下載</a>
+      <a class="btn ghost" href="#s1">從第 1 步開始</a>
+    </div>
+    <div class="meta" id="dlNote"></div>
+  </header>
+
+  <div class="topbar">
+    <nav aria-label="頁面導覽">
+      <a href="#s1">1 下載</a>
+      <a href="#s2">2 安裝軟體</a>
+      <a href="#s3">3 配置台</a>
+      <a href="#s4">4 上傳</a>
+      <a href="#s5">5 燈號測試</a>
+      <a href="#hw">接線提醒</a>
+      <a href="#map">預設按鍵</a>
+      <a href="#faq">常見問題</a>
+    </nav>
+    <div class="progress"><span id="progText">已完成 0 / 5</span><div class="bar"><i id="progBar"></i></div></div>
+  </div>
+
+  <ol class="strip">
+    <li><b>1</b>下載並解壓縮</li>
+    <li><b>2</b>安裝 Arduino IDE</li>
+    <li><b>3</b>用配置台設計控制</li>
+    <li><b>4</b>貼上程式並上傳</li>
+    <li><b>5</b>開機看燈號測試</li>
+  </ol>
+
+  <!-- STEP 1 -->
+  <section class="card" id="s1" data-step>
+    <div class="step-head">
+      <div class="badge">1</div>
+      <h2>下載並解壓縮工具包</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>點上面的「下載工具包」，取得 <code>PS2_Car_tool_efun.zip</code>。</li>
+      <li>在檔案上按右鍵，選<b>「全部解壓縮」</b>（不要直接在壓縮檔裡面點開檔案使用）。</li>
+      <li>解壓縮後，你會看到這樣的內容：</li>
+    </ol>
+<pre class="tree">PS2_Car_tool_efun/
+├─ PS2控制配置台.html     ← 網頁設計工具（第 3 步用）
+├─ 使用說明.txt
+└─ PS2Car/                ← Arduino 專案資料夾（第 4 步用）
+   ├─ PS2Car.ino          ← 你的程式會放在這裡
+   └─ 其他 .h / .cpp      ← 控制板需要的檔案，請不要刪除</pre>
+    <div class="note warn">
+      <b class="t">⚠ 重要：名稱不要改成中文</b>
+      <p><code>PS2Car</code> 資料夾和裡面的 <code>PS2Car.ino</code> 一定要<b>用英文</b>，而且兩個名字要一模一樣。改成中文的話，Arduino 會跳出「Invalid sketch name」打不開。</p>
+    </div>
+    <div class="note tip">
+      <b class="t">💡 小提醒</b>
+      <p>整個 <code>PS2Car</code> 資料夾要一起使用，不能只複製 <code>PS2Car.ino</code> 一個檔案出來，否則編譯時會找不到其他檔案。</p>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="card" id="s2" data-step>
+    <div class="step-head">
+      <div class="badge">2</div>
+      <h2>安裝 Arduino IDE</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <p>Arduino IDE 是把程式「燒進」控制板的軟體。<b>很多人卡在這一步：沒裝它，後面的程式就送不進車子。</b>電腦裡已經有就可以跳過。（以下以 Windows 為例）</p>
+    <p><a class="btn primary" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">⬇ 前往 Arduino 官方下載頁</a></p>
+    <ol class="steps">
+      <li>點上面的按鈕（或到 <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a>），下載 <b>Windows</b> 版安裝檔。下載頁可能會問要不要捐款，直接點「Just Download」即可，不用付費。</li>
+      <li>執行安裝檔，一路按「下一步」直到完成。</li>
+    </ol>
+    <p>你<b>不需要</b>另外安裝任何函式庫，需要的檔案都已經放在 <code>PS2Car</code> 資料夾裡了。</p>
+
+    <h3>可能要裝：CH340 驅動程式</h3>
+    <p>第一次把控制板用 USB 接上電腦後，如果在 Arduino IDE 的「工具 → 連接埠」裡<b>完全沒有 COM 埠</b>，或是「裝置管理員」出現黃色驚嘆號／「不明裝置」，就是缺驅動：</p>
+    <ol class="steps">
+      <li>搜尋並安裝「<b>CH340 driver</b>」（免費的常見驅動程式）。</li>
+      <li>裝好後把 USB 線拔掉再重新插上。</li>
+    </ol>
+    <div class="note tip"><b class="t">💡</b><p>Windows 有時會自己裝好驅動，連接埠出現了就不用再裝。</p></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="card" id="s3" data-step>
+    <div class="step-head">
+      <div class="badge">3</div>
+      <h2>用「PS2 控制配置台」設計控制方式</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <p>用 Chrome 或 Edge 直接打開解壓縮資料夾裡的 <code>PS2控制配置台.html</code>（不用安裝、不用網路）。也可以直接用<a href="configurator.html" target="_blank" rel="noopener">網頁版配置台</a>，功能一樣。你要做的事就是告訴它：<b>手把哪個按鍵／搖桿，要控制哪個馬達或伺服機</b>，它會幫你寫好 Arduino 程式。</p>
+
+    <h3>① 選驅動模式</h3>
+    <div class="mock"><div class="row"><span class="chip">遙控車模式</span><span class="chip on">戰車模式</span><span class="chip">手動模式</span></div></div>
+    <ul class="plain">
+      <li><b>遙控車模式</b>：像開車——左搖桿前後控制前進後退，右搖桿左右控制轉彎。</li>
+      <li><b>戰車模式</b>：像履帶戰車——左搖桿控制左輪，右搖桿控制右輪，各自獨立。</li>
+      <li><b>手動模式</b>：搖桿不自動開車，全部由你自己指定。（這個模式不會有燈號與蜂鳴器）</li>
+    </ul>
+    <p>選好後，下面會出現「左輪馬達／右輪馬達」的選單，選你車子實際接的馬達。</p>
+
+    <h3>② 設定按鍵對應</h3>
+    <p>在手把圖上點一個按鍵（或搖桿軸），再選它要做什麼，例如「按住 ○ 時，伺服機轉到 35 度」「按住 R2 時，馬達 M3 前進」。設定好之後，右邊／下方就會即時更新程式碼。</p>
+
+    <h3>③ 常用的進階設定</h3>
+    <div class="mock">
+      <div class="row" style="margin-bottom:6px"><b>搖桿死區</b>　Y 軸 <span class="fakeslider"></span> ±20</div>
+      <div class="row"><b>進階</b>　▸ 練習模式（限速，適合新手）　▸ 方向鍵即時切換模式</div>
+    </div>
+    <table>
+      <tr><th style="width:9em">設定</th><th>用途</th></tr>
+      <tr><td>搖桿死區</td><td>搖桿放開時很難剛好回到正中間。死區範圍內的小晃動都當作「沒推」。車子在原地抖動、爬行時，把死區調大；覺得搖桿要推很多才會動，就調小。建議從預設 ±20 開始。</td></tr>
+      <tr><td>練習模式（限速）</td><td>勾選後可以拉桿設定「最高速度上限」（預設 60%）。新手剛開始建議開著，車子不容易失控撞牆。<b>練習夠了要取消勾選，重新產生程式碼並上傳</b>，才會恢復全速。</td></tr>
+      <tr><td>方向鍵即時切換模式</td><td>預設是開啟。比賽中不用重新上傳，按手把的方向鍵就能在「遙控車」與「戰車」模式間切換（見第 5 步）。</td></tr>
+    </table>
+
+    <h3>④ 取得程式碼</h3>
+    <p>設定完成後，按「<b>複製程式碼</b>」，或按「<b>下載程式碼</b>」存成檔案。</p>
+    <div class="note tip"><b class="t">💡 記得備份</b><p>瀏覽器通常會記住你上次的設定，但不保證。每次設計完，請把程式碼複製或下載保存起來，不要只靠瀏覽器記憶。</p></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="card" id="s4" data-step>
+    <div class="step-head">
+      <div class="badge">4</div>
+      <h2>貼進 PS2Car.ino 並上傳到控制板</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>打開 Arduino IDE，選單「<b>檔案 → 開啟</b>」，選到 <code>PS2Car</code> 資料夾裡的 <code>PS2Car.ino</code>。</li>
+      <li>在程式編輯區按 <kbd>Ctrl</kbd>+<kbd>A</kbd> 全選，按 <kbd>Delete</kbd> 刪掉原本內容，再按 <kbd>Ctrl</kbd>+<kbd>V</kbd> 貼上剛剛複製的程式碼，存檔（<kbd>Ctrl</kbd>+<kbd>S</kbd>）。<br><span style="color:var(--ink-faint)">（如果你是下載成檔案，打開後全選複製，貼進 <code>PS2Car.ino</code> 一樣的做法。）</span></li>
+      <li>用 USB 線把控制板接上電腦。</li>
+      <li>選單「<b>工具 → 開發板</b>」選 <b>Arduino Uno</b>。</li>
+      <li>選單「<b>工具 → 連接埠</b>」選出現的那個 <b>COM 埠</b>。（沒有的話回第 2 步檢查 CH340 驅動。）</li>
+      <li>按左上角的 <b>「→」上傳鍵</b>，等下方訊息列顯示「<b>上傳成功</b>」。上傳時板子燈閃爍是正常的。</li>
+    </ol>
+    <div class="note warn">
+      <b class="t">⚠ 上傳前先確認</b>
+      <p>如果有模組接在控制板的 <b>0、1 腳位（RX/TX）</b>，上傳可能失敗。先把那兩個腳位的線拔掉，上傳成功再接回去。</p>
+    </div>
+    <div class="note tip">
+      <b class="t">💡 以後改設定</b>
+      <p>每次在配置台改了設定，都要<b>重新複製程式碼 → 貼上 → 上傳</b>，車子才會用新設定。</p>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="card" id="s5" data-step>
+    <div class="step-head">
+      <div class="badge">5</div>
+      <h2>開機看燈號，測試手把</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <p>控制板上有內建的 <b>RGB 彩色燈</b>和<b>蜂鳴器</b>，不用另外接線。燈號可以讓你一眼看出車子現在的狀態。</p>
+
+    <h3>開機後會看到</h3>
+    <div class="flow">
+      <div class="node"><span class="dot p"></span><span><b>暗紫燈</b>（約半秒）<br>表示新版程式啟動了</span></div>
+      <span class="arrow">➜</span>
+      <div class="node"><span class="dot r"></span><span><b>紅燈</b>　戰車模式<br>（預設起始模式）</span></div>
+    </div>
+    <p>紫燈之後亮的顏色，就是配置台裡選的「起始模式」：<span class="led r"></span>紅燈＝戰車模式、<span class="led g"></span>綠燈＝遙控車模式。</p>
+
+    <p>如果老師要你把幾台車放在一起，配置台的「進階：呼吸燈車號」可以選 1～4 號：燈會慢慢<b>呼吸</b>（戰車＝深紅到粉紅、遙控車＝深綠到淺綠），<b>車號越大呼吸越快</b>，顏色還是代表模式。手把斷線煞車時，燈會改成急促閃紅。</p>
+
+    <h3>用方向鍵切換模式</h3>
+    <div class="flow">
+      <div class="node"><span class="dot r"></span><span><b>戰車模式</b><br>按手把 <kbd>方向鍵下</kbd>　低音嗶一聲</span></div>
+      <span class="arrow both">⇄</span>
+      <div class="node"><span class="dot g"></span><span><b>遙控車模式</b><br>按手把 <kbd>方向鍵上</kbd>　高音嗶一聲</span></div>
+    </div>
+    <p>切換成功時，燈色會立刻改變並發出短短的「嗶」聲。（這需要配置台的「方向鍵即時切換模式」保持開啟，預設就是開的。）</p>
+
+    <table>
+      <tr><th style="width:10em">看到的情況</th><th>代表什麼／怎麼辦</th></tr>
+      <tr><td><span class="led p"></span>開機有閃暗紫燈</td><td>新版程式有成功上傳 👍</td></tr>
+      <tr><td>沒有紫燈，一開機就是綠燈</td><td>可能還是舊版程式，或這次上傳沒成功。重新上傳一次。</td></tr>
+      <tr><td>完全沒有燈</td><td>確認電池／電源有接好、電源開關有打開。若配置台選的是「手動模式」，本來就不會有燈號。</td></tr>
+      <tr><td>車子開著開著突然停住</td><td>手把和接收器之間斷線了（可能手把沒電或離太遠）。程式會<b>自動讓所有馬達煞車</b>，訊號恢復後就會繼續動，不用重開機。</td></tr>
+    </table>
+
+    <h3>測試順序建議</h3>
+    <ol class="steps">
+      <li>先把車子<b>架高</b>，讓輪子離地，避免一開機就衝出去。</li>
+      <li>打開手把電源，等它和接收器連上。</li>
+      <li>推左／右搖桿，看輪子轉動方向對不對；按各個按鍵，看馬達與伺服機有沒有照你設定動作。</li>
+      <li>都正常了再放到地上開。</li>
+    </ol>
+  </section>
+
+  <!-- HARDWARE -->
+  <section class="card" id="hw">
+    <div class="step-head"><h2>🔌 接線與硬體提醒</h2></div>
+    <h3>電源</h3>
+    <ul class="plain">
+      <li>本機使用 <b>2 顆 18650 鋰電池串聯</b>供電（滿電約 8.4 V）。</li>
+      <li>電源接在板子的<b>「電源接線柱」（螺絲鎖固式端子）</b>，不是小插頭。<b>正負極不要接反</b>，螺絲要鎖緊，線頭不要鬆脫。</li>
+      <li>只接 USB 線通常可以上傳程式，但<b>馬達需要接上電池才會動</b>。</li>
+    </ul>
+    <div class="note bad">
+      <b class="t">🔋 馬達沒力、時動時不動，先量電池電壓！</b>
+      <p>電壓不夠時，馬達會無力或動不起來，看起來很像「接線接錯了」。遇到這種狀況，<b>先用三用電表量電池電壓，再來檢查接線</b>。</p>
+      <p>兩顆電池串聯，電壓低於約 <b>6.4 V</b> 就先充電或換電池，不要硬用。（電池要完整充電、同時使用的兩顆最好是同一批。）</p>
+    </div>
+
+    <h3>馬達與伺服機</h3>
+    <ul class="plain">
+      <li>直流馬達接在板子的 <b>M1～M4</b> 端子。左右輪實際接哪一個，要和配置台「左輪馬達／右輪馬達」選的一致。</li>
+      <li>伺服機接在標示 1～8 的插座。配置台裡的「伺服機表」會標示每個名稱對應的插槽號碼，照表接。</li>
+      <li>伺服機插頭有方向性，<b>對照板子上的標示插，不要反插</b>。</li>
+      <li>輪子方向相反（推前進卻後退）：在馬達端子上把<b>該顆馬達的兩條線對調</b>就會反過來；或在配置台改選左右輪馬達。</li>
+    </ul>
+
+    <h3>內建的燈與蜂鳴器</h3>
+    <p>RGB 燈（接在 A1）和蜂鳴器（接在 A0）都是<b>板子內建</b>的，不需要外接。請不要把其他零件接在 A0、A1 上。</p>
+  </section>
+
+  <!-- DEFAULT MAP -->
+  <section class="card" id="map">
+    <div class="step-head"><h2>🎮 預設範本的按鍵對應</h2></div>
+    <p>工具包預設的設定長這樣。你在配置台改過之後就會不一樣，以你下載的程式碼為準。</p>
+    <div class="tablewrap">
+    <table>
+      <tr><th>手把操作</th><th>動作</th></tr>
+      <tr><td>左搖桿 前／後</td><td>戰車模式：左輪前進／後退　　遙控車模式：整台車前進／後退</td></tr>
+      <tr><td>右搖桿 前／後</td><td>戰車模式：右輪前進／後退</td></tr>
+      <tr><td>右搖桿 左／右</td><td>遙控車模式：轉彎（原地轉向也可以）</td></tr>
+      <tr><td><kbd>R1</kbd> / <kbd>R2</kbd></td><td>馬達 M3：R1 後退、R2 前進（按住才轉，放開煞車）</td></tr>
+      <tr><td><kbd>L1</kbd> / <kbd>L2</kbd></td><td>馬達 M4：L1 前進、L2 後退（L2 速度較慢）</td></tr>
+      <tr><td><kbd>○</kbd> / <kbd>□</kbd></td><td>伺服機 1：○ 轉到 35°、□ 轉到 115°（放開回到待命角度）</td></tr>
+      <tr><td><kbd>△</kbd> / <kbd>✕</kbd></td><td>伺服機 3：△ 轉到 135°、✕ 轉到 40°（放開回到待命角度）</td></tr>
+      <tr><td>左搖桿 左／右</td><td>伺服機 4：跟著搖桿位置連續轉動（約 60°～90°）</td></tr>
+      <tr><td>方向鍵 上／下</td><td>切換模式：上＝遙控車（綠燈）、下＝戰車（紅燈）</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <h2 style="margin:26px 0 8px">❓ 常見問題</h2>
+
+    <details class="faq"><summary>打開專案時跳出「Invalid sketch name」</summary><div class="a">
+      <p>資料夾名稱或 <code>.ino</code> 檔名含有中文、空格，或兩個名字不一樣。請把<b>資料夾和檔案都改成英文</b>且完全相同（例如 <code>PS2Car</code> 與 <code>PS2Car.ino</code>）。</p>
+    </div></details>
+
+    <details class="faq"><summary>編譯時出現一大堆「找不到 xxx.h」</summary><div class="a">
+      <p>通常是只複製了 <code>PS2Car.ino</code> 單一檔案。請確認你打開的 <code>PS2Car.ino</code> 旁邊還有 <code>Emakefun_MotorDriver.h</code>、<code>PS2X_lib.h</code> 等一整批檔案；也不要在 zip 壓縮檔裡面直接打開，要先「全部解壓縮」。</p>
+    </div></details>
+
+    <details class="faq"><summary>上傳時出現 avrdude: stk500_recv(): programmer is not responding</summary><div class="a">
+      <p>大多是以下兩種原因：</p>
+      <ul class="plain">
+        <li>「連接埠」選錯了，重新在「工具 → 連接埠」選對 COM 埠、「開發板」選 Arduino Uno。</li>
+        <li>0、1 腳位（RX/TX）接了模組干擾上傳。把那兩個腳位的線先拔掉，上傳成功再接回去。</li>
+      </ul>
+    </div></details>
+
+    <details class="faq"><summary>「連接埠」選單裡完全沒有 COM 埠</summary><div class="a">
+      <p>通常是沒裝驅動。依第 2 步安裝「CH340 driver」，裝完把 USB 拔掉再插上。也可以換一條 USB 線試試（有些線只能充電，不能傳資料）。</p>
+    </div></details>
+
+    <details class="faq"><summary>上傳成功了，但車子完全不動</summary><div class="a">
+      <p>依序檢查：</p>
+      <ol class="steps">
+        <li>開機有沒有看到暗紫燈？沒有的話，程式可能沒上傳成功。</li>
+        <li>手把電池有電嗎？手把電源有打開、和接收器連上了嗎？</li>
+        <li>PS2 接收器有插好嗎？</li>
+        <li>電池有接好、電壓夠嗎？（見「接線與硬體提醒」，先量電壓。）</li>
+        <li>配置台裡該按鍵有真的設定對應的馬達嗎？</li>
+      </ol>
+    </div></details>
+
+    <details class="faq"><summary>馬達沒力、一加速就卡住或板子重開</summary><div class="a">
+      <p>最常見的原因是<b>電池電壓不夠</b>。請用三用電表量電池電壓，低於約 6.4 V 就先充電或換電池，再來懷疑接線。也可以打開練習模式降低最高速度，測試看看是否比較穩定。</p>
+    </div></details>
+
+    <details class="faq"><summary>我的手把好像連到別組的車</summary><div class="a">
+      <p>很多組同時使用時，手把可能連到別台車的接收器。請在測試時<b>一次只開自己組的手把</b>，確認你按按鍵時是自己的車有反應；其他組先關掉手把電源。不確定時請老師協助。</p>
+    </div></details>
+
+    <details class="faq"><summary>左右輪方向相反，或前進變後退</summary><div class="a">
+      <p>兩個辦法擇一：在馬達端子上把<b>那一顆馬達的兩條線對調</b>；或在配置台的「左輪馬達／右輪馬達」改選。改完配置台記得重新複製、貼上、上傳。</p>
+    </div></details>
+
+    <details class="faq"><summary>車子在搖桿放開時還是會抖動或慢慢爬</summary><div class="a">
+      <p>把配置台的「搖桿死區」調大一點（例如 ±25～±30），重新產生程式碼並上傳。</p>
+    </div></details>
+
+    <details class="faq"><summary>怎麼把練習模式（限速）關掉？</summary><div class="a">
+      <p>在配置台「進階：練習模式」取消勾選，重新複製程式碼、貼進 <code>PS2Car.ino</code>、再上傳一次，車子就會恢復全速。</p>
+    </div></details>
+
+    <details class="faq"><summary>關掉瀏覽器，配置台的設定會不見嗎？</summary><div class="a">
+      <p>通常不會，但不保證。為了保險，每次設計完請把程式碼複製或下載備份。</p>
+    </div></details>
+  </section>
+
+  <footer>
+    PS2 小車學生工具包　安裝與使用指南<br>
+    有問題請先對照上面的常見問題，還是解決不了再找老師。
+  </footer>
+</div>
+
+<script>
+  /* ==============================================================
+     老師只需要改這一行：把 Google 雲端硬碟的 zip 分享連結貼在引號裡。
+     - 雲端硬碟裡對檔案按右鍵 → 共用 → 一般存取權改成「知道連結的任何人」→ 複製連結
+     - 想讓學生點了直接下載，可把連結中的 FILE_ID 套進下面格式：
+       https://drive.google.com/uc?export=download&id=FILE_ID
+     ============================================================== */
+  var DOWNLOAD_URL = "PS2_Car_tool_efun.zip";
+
+  (function(){
+    var btn = document.getElementById("dlBtn");
+    var note = document.getElementById("dlNote");
+    if(DOWNLOAD_URL){
+      btn.href = DOWNLOAD_URL; btn.setAttribute("download","PS2_Car_tool_efun.zip"); btn.removeAttribute("target");
+      btn.textContent = "⬇ 下載工具包（PS2_Car_tool_efun.zip）";
+      note.textContent = "檔案約 70 KB，下載後請先「全部解壓縮」再使用。";
+    }else{
+      btn.setAttribute("aria-disabled","true");
+      btn.removeAttribute("target");
+      btn.addEventListener("click", function(e){ e.preventDefault(); });
+      btn.textContent = "⬇ 下載工具包（連結尚未設定）";
+      note.textContent = "老師還沒有設定下載連結，請先向老師索取工具包。";
+    }
+
+    /* 進度條（只存在目前頁面，不會儲存） */
+    var boxes = Array.prototype.slice.call(document.querySelectorAll("[data-step] .done input"));
+    var text = document.getElementById("progText");
+    var bar = document.getElementById("progBar");
+    function update(){
+      var n = boxes.filter(function(b){ return b.checked; }).length;
+      text.textContent = "已完成 " + n + " / " + boxes.length;
+      bar.style.width = (n / boxes.length * 100) + "%";
+    }
+    boxes.forEach(function(b){ b.addEventListener("change", update); });
+    update();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1709 @@
+<title>PS2控制配置台</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#eef1ec;
+    --surface:#ffffff;
+    --surface-2:#e2e7e0;
+    --ink:#16211c;
+    --ink-soft:#52625a;
+    --ink-faint:#8b9a90;
+    --line:#c9d2c5;
+    --accent:#c85a1e;
+    --accent-ink:#fff8f2;
+    --accent-soft:#f3ddc9;
+    --ok:#2f7a4f;
+    --ok-soft:#dbeee1;
+    --warn:#b23b30;
+    --mono-surface:#161f18;
+    --mono-surface-2:#1f2b22;
+    --mono-ink:#dbe6de;
+    --mono-faint:#6f8378;
+    --mono-accent:#f2a65a;
+    --mono-string:#9bc98a;
+    --mono-comment:#6f8378;
+    --btn-triangle:#4f9d78;
+    --btn-circle:#d1637e;
+    --btn-cross:#5b8dc9;
+    --btn-square:#b17bd1;
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:20px;
+    --shadow:0 1px 2px rgba(20,30,20,.06), 0 8px 24px -12px rgba(20,30,20,.18);
+    font-size:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#11150f;
+      --surface:#1a201a;
+      --surface-2:#232a22;
+      --ink:#e9efe6;
+      --ink-soft:#aab6a5;
+      --ink-faint:#728070;
+      --line:#333d31;
+      --accent:#e2833e;
+      --accent-ink:#1c1108;
+      --accent-soft:#3a2a1a;
+      --ok:#5cbb87;
+      --ok-soft:#1e3226;
+      --warn:#e2766a;
+      --mono-surface:#0e130f;
+      --mono-surface-2:#161f18;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#11150f;
+    --surface:#1a201a;
+    --surface-2:#232a22;
+    --ink:#e9efe6;
+    --ink-soft:#aab6a5;
+    --ink-faint:#728070;
+    --line:#333d31;
+    --accent:#e2833e;
+    --accent-ink:#1c1108;
+    --accent-soft:#3a2a1a;
+    --ok:#5cbb87;
+    --ok-soft:#1e3226;
+    --warn:#e2766a;
+    --mono-surface:#0e130f;
+    --mono-surface-2:#161f18;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Work Sans", "Noto Sans TC", system-ui, sans-serif;
+    padding-inline:16px;
+    padding-block:28px 48px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+  }
+  h1,h2,h3{font-family:"Chivo","Noto Sans TC",sans-serif; text-wrap:balance; margin:0;}
+  code, .mono{font-family:"IBM Plex Mono", ui-monospace, monospace;}
+  .wrap{width:100%; max-width:1180px; display:flex; flex-direction:column; gap:20px;}
+
+  /* ---------- header ---------- */
+  .hero{
+    width:100%;
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface) 60%, var(--accent-soft) 130%);
+    border:1px solid var(--line);
+    border-radius:var(--radius-l);
+    padding:26px 28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    justify-content:space-between;
+    align-items:flex-end;
+    box-shadow:var(--shadow);
+  }
+  .hero .eyebrow{
+    font-family:"IBM Plex Mono";
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  .hero h1{font-size:clamp(1.5rem,2.6vw,2.1rem); font-weight:900; margin-top:6px;}
+  .hero p{color:var(--ink-soft); max-width:52ch; margin-top:8px; font-size:.94rem; line-height:1.55;}
+  .hero-actions{display:flex; gap:10px; flex-wrap:wrap;}
+
+  button{font-family:inherit; cursor:pointer;}
+  .btn{
+    appearance:none; border:1px solid var(--line); background:var(--surface);
+    color:var(--ink); padding:10px 16px; border-radius:999px; font-size:.86rem; font-weight:600;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .12s ease, border-color .12s ease;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn:focus-visible, [tabindex]:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .btn.ghost{background:transparent;}
+  .btn:active{transform:scale(.97);}
+  .btn[disabled]{opacity:.45; cursor:not-allowed;}
+
+  /* ---------- layout grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-l);
+    padding:22px;
+    box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .panel > header{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .panel > header h2{font-size:1.05rem; font-weight:700;}
+  .panel > header .hint{font-size:.8rem; color:var(--ink-faint);}
+
+  /* ---------- gamepad schematic ---------- */
+  .pad{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    padding:22px 16px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-areas:
+      "l2 . r2"
+      "l1 . r1"
+      "dpad center face"
+      "lstick . rstick";
+    row-gap:18px;
+    column-gap:10px;
+    align-items:center;
+  }
+  @media (max-width:520px){
+    .pad{grid-template-columns:1fr 1fr; grid-template-areas:
+      "l1 r1"
+      "l2 r2"
+      "dpad face"
+      "lstick rstick"
+      "center center";}
+  }
+  .hot{
+    border:1.5px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:var(--radius-s);
+    font-family:"IBM Plex Mono";
+    font-weight:600;
+    font-size:.78rem;
+    padding:9px 4px;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    position:relative;
+    min-height:38px;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .hot:hover{border-color:var(--accent);}
+  .hot.active{border-color:var(--accent); background:var(--accent-soft);}
+  .hot.assigned{box-shadow:inset 0 0 0 2px var(--ok);}
+  .hot .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--ink-faint); flex:none;
+  }
+  .hot.assigned .dot{background:var(--ok);}
+  .hot.locked{opacity:.45; cursor:help;}
+  .hot.face{color:#fff;}
+  .hot.face .glyph{font-size:1rem; line-height:1;}
+  .clr-tri{background:var(--btn-triangle); border-color:var(--btn-triangle);}
+  .clr-sq{background:var(--btn-square); border-color:var(--btn-square);}
+  .clr-ci{background:var(--btn-circle); border-color:var(--btn-circle);}
+  .clr-cr{background:var(--btn-cross); border-color:var(--btn-cross);}
+  .hot.face.active{background:var(--accent-soft) !important; border-color:var(--accent) !important; color:var(--ink) !important; box-shadow:inset 0 0 0 2px var(--accent);}
+  .row2{display:flex; gap:8px;}
+  .area-l2{grid-area:l2;} .area-r2{grid-area:r2;} .area-l1{grid-area:l1;} .area-r1{grid-area:r1;}
+  .area-dpad{grid-area:dpad;} .area-center{grid-area:center;} .area-face{grid-area:face;}
+  .area-lstick{grid-area:lstick;} .area-rstick{grid-area:rstick;}
+
+  .dpad-grid{display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:4px; width:120px; margin-inline:auto;}
+  .dpad-grid .hot{min-height:32px; padding:4px;}
+  .dpad-up{grid-column:2; grid-row:1;} .dpad-left{grid-column:1; grid-row:2;} .dpad-right{grid-column:3; grid-row:2;} .dpad-down{grid-column:2; grid-row:3;}
+
+  .face-grid{display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:4px; width:120px; margin-inline:auto;}
+  .face-tri{grid-column:2; grid-row:1;} .face-sq{grid-column:1; grid-row:2;} .face-ci{grid-column:3; grid-row:2;} .face-cr{grid-column:2; grid-row:3;}
+
+  .center-cluster{display:flex; flex-direction:column; gap:6px; align-items:center;}
+  .center-cluster .hot{width:100%; max-width:96px;}
+
+  .stick{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .stick-dial{
+    width:64px; height:64px; border-radius:50%;
+    border:2px solid var(--line);
+    background:radial-gradient(circle at 50% 42%, var(--surface) 0%, var(--surface-2) 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Mono"; font-size:.68rem; color:var(--ink-faint);
+  }
+  .stick-axes{display:flex; gap:6px;}
+  .stick-axes .hot{min-width:42px; font-size:.72rem;}
+
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.76rem; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend .dot{width:7px; height:7px; border-radius:50%;}
+
+  /* ---------- inspector ---------- */
+  .inspector{
+    border:1px dashed var(--line);
+    border-radius:var(--radius-m);
+    padding:18px;
+    background:var(--surface-2);
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .inspector .empty{color:var(--ink-faint); font-size:.88rem; text-align:center; padding:18px 0;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:.76rem; font-weight:600; color:var(--ink-soft); letter-spacing:.02em;}
+  .seg{display:flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; background:var(--surface);}
+  .seg button{flex:1; border:none; background:transparent; padding:8px 10px; font-size:.82rem; font-weight:600; color:var(--ink-soft);}
+  .seg button.on{background:var(--accent); color:var(--accent-ink);}
+  .drive-card{border:1px solid var(--line); border-radius:var(--radius-m); background:var(--surface); cursor:pointer; transition:border-color .15s, box-shadow .15s; text-align:left; display:flex; flex-direction:column; gap:6px; padding:12px; height:auto; white-space:normal;}
+  .drive-card strong{font-size:.88rem;}
+  .drive-card.on{border-color:var(--accent); border-width:2px; box-shadow:var(--shadow);}
+  select, input[type=number], input[type=text]{
+    font-family:inherit; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:9px 10px; background:var(--surface); color:var(--ink); font-size:.88rem;
+  }
+  input[type=range]{width:100%; accent-color:var(--accent);}
+  .range-row{display:flex; align-items:center; gap:10px;}
+  .range-row .val{font-family:"IBM Plex Mono"; font-size:.82rem; min-width:3.4em; text-align:right; color:var(--ink);}
+  .check{display:flex; align-items:center; gap:8px; font-size:.84rem; color:var(--ink-soft);}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .inspector-title{display:flex; justify-content:space-between; align-items:center;}
+  .inspector-title h3{font-size:.95rem;}
+  .inspector-title .tag{font-family:"IBM Plex Mono"; font-size:.72rem; color:var(--ink-faint);}
+
+  .target-list{display:flex; flex-direction:column; gap:12px;}
+  .target-card{
+    border:1px solid var(--line); border-radius:var(--radius-s); background:var(--surface);
+    padding:12px; display:flex; flex-direction:column; gap:10px;
+  }
+  .target-card-head{display:flex; justify-content:space-between; align-items:center;}
+  .target-num{font-family:"IBM Plex Mono"; font-size:.72rem; color:var(--accent); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
+  .icon-btn{
+    appearance:none; border:1px solid var(--line); background:transparent; color:var(--ink-faint);
+    font-size:.72rem; padding:3px 9px; border-radius:999px;
+  }
+  .icon-btn:hover{border-color:var(--warn); color:var(--warn);}
+  .btn.small{padding:7px 14px; font-size:.78rem; align-self:flex-start;}
+
+  /* ---------- device tables ---------- */
+  .devtable{width:100%; border-collapse:collapse;}
+  .devtable th{text-align:left; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:600; padding:0 8px 8px;}
+  .devtable td{padding:6px 8px; border-top:1px solid var(--line); vertical-align:middle;}
+  .devtable input[type=text]{width:100%; min-width:0;}
+  .devtable input[type=number]{width:64px;}
+  .devtable .slotcol{white-space:nowrap; font-family:"IBM Plex Mono"; font-size:.8rem; color:var(--ink-soft);}
+  .devtable tr.disabled{opacity:.4;}
+  .table-wrap{overflow-x:auto;}
+  .board-row{display:flex; gap:14px; flex-wrap:wrap;}
+  .board-row .field{flex:1; min-width:120px;}
+
+  /* ---------- code panel ---------- */
+  .codepanel{
+    background:var(--mono-surface);
+    border-radius:var(--radius-m);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    box-shadow:var(--shadow);
+  }
+  .codebar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 14px; background:var(--mono-surface-2);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .codebar .fname{font-family:"IBM Plex Mono"; font-size:.8rem; color:var(--mono-ink);}
+  .codebar .dots{display:flex; gap:6px;}
+  .codebar .dots span{width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.12);}
+  .codeactions{display:flex; gap:8px;}
+  .codeactions .btn{padding:7px 12px; font-size:.78rem; background:transparent; border-color:rgba(255,255,255,.18); color:var(--mono-ink);}
+  .codeactions .btn.primary{background:var(--mono-accent); border-color:var(--mono-accent); color:#20140a;}
+  pre.code{
+    margin:0; padding:16px 18px; overflow:auto; max-height:480px;
+    font-family:"IBM Plex Mono"; font-size:.78rem; line-height:1.6; color:var(--mono-ink);
+    white-space:pre;
+  }
+  pre.code .c{color:var(--mono-comment);}
+  pre.code .kw{color:var(--mono-accent);}
+  pre.code .str{color:var(--mono-string);}
+  pre.code .num{color:#7fb0d6;}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translate(-50%,10px);
+    background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:999px;
+    font-size:.84rem; opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+    z-index:50;
+  }
+  .toast.show{opacity:1; transform:translate(-50%,0);}
+
+  footer.note{font-size:.78rem; color:var(--ink-faint); text-align:center; max-width:60ch; line-height:1.6;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  /* ---------- setup / how-to ---------- */
+  a{color:var(--accent);}
+  details.setup summary{
+    cursor:pointer; list-style:none; display:flex; justify-content:space-between;
+    align-items:baseline; gap:12px; flex-wrap:wrap;
+  }
+  details.setup summary::-webkit-details-marker{display:none;}
+  details.setup summary::after{
+    content:"點一下展開／收合"; font-size:.72rem; color:var(--ink-faint); font-family:"IBM Plex Mono"; flex:none;
+  }
+  .setup-title{font-family:"Chivo"; font-weight:700; font-size:1.05rem; color:var(--ink);}
+  .setup-sub{font-size:.82rem; color:var(--ink-faint);}
+  .setup-body{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:16px;}
+  @media (max-width:760px){ .setup-body{grid-template-columns:1fr;} }
+  .setup-col h3{font-size:.92rem; margin-bottom:10px;}
+  .steps{margin:0 0 10px; padding-left:1.25em; display:flex; flex-direction:column; gap:9px; font-size:.86rem; color:var(--ink-soft); line-height:1.6;}
+  .steps li::marker{color:var(--accent); font-weight:700;}
+  .note{font-size:.8rem; color:var(--ink-faint); line-height:1.65; margin:8px 0;}
+  .note.warn{background:var(--accent-soft); color:var(--ink); padding:12px 14px; border-radius:var(--radius-s); border:1px solid var(--accent);}
+  .note.ok{background:var(--ok-soft); color:var(--ink); padding:12px 14px; border-radius:var(--radius-s); border:1px solid var(--ok);}
+  .chiplist{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 12px;}
+  .chiplist span{font-family:"IBM Plex Mono"; font-size:.72rem; background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:3px 8px; color:var(--ink-soft);}
+</style>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">PS2 GAMEPAD · EMAKEFUN MOTOR DRIVER</div>
+      <h1>PS2 控制配置台</h1>
+      <p>點手把上的按鍵或搖桿，設定它要控制哪顆馬達或伺服馬達，右邊會即時產生可以直接貼進 Arduino IDE 的 .ino 程式碼。</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn ghost" id="btnPreset">套用中正創客車預設</button>
+      <button class="btn ghost" id="btnClear">清空全部設定</button>
+    </div>
+  </section>
+
+  <details class="panel setup" open>
+    <summary>
+      <span class="setup-title">安裝與使用前準備</span>
+      <span class="setup-sub">第一次用這個工具的話，建議先看過這裡，之後可以收合起來</span>
+    </summary>
+    <div class="setup-body">
+      <div class="setup-col">
+        <h3>一、下載 Arduino IDE</h3>
+        <ol class="steps">
+          <li>到 Arduino 官方下載頁：<a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a>，依你的作業系統（Windows／macOS）下載安裝檔並安裝。</li>
+          <li>用 USB 接上擴充板後打開 Arduino IDE，到「工具 → 開發板」選對應的板子（例如 Arduino Uno），「工具 → 序列埠」選正確的連接埠，才能燒錄。</li>
+        </ol>
+      </div>
+      <div class="setup-col">
+        <h3>二、載入這台車專用的函式庫</h3>
+        <p class="note">這片 Emakefun 擴充板用的函式庫不是從「函式庫管理員」搜尋安裝的，而是要把檔案跟 .ino 放在同一個資料夾，Arduino IDE 才會一起編譯進去。</p>
+        <ol class="steps">
+          <li>建立一個新資料夾，<strong>名稱要跟下載的 .ino 檔名完全相同</strong>（例如 <code>PS2Car_generated</code>）——Arduino 規定 sketch 資料夾名稱跟 .ino 檔名都只能用英文字母、數字、底線、破折號（不能有中文或空格），而且兩者要完全一致，不一樣的話 IDE 會要你另存新檔或跳出「Invalid sketch name」錯誤。</li>
+          <li>把上面「下載 .ino」拿到的檔案放進這個資料夾。</li>
+          <li>把下面這 12 個檔案，從這個工具包資料夾裡整份複製到同一個資料夾：</li>
+        </ol>
+        <div class="chiplist">
+          <span>Emakefun_MotorDriver.h</span><span>Emakefun_MotorDriver.cpp</span>
+          <span>Emakefun_MS_PWMServoDriver.h</span><span>Emakefun_MS_PWMServoDriver.cpp</span>
+          <span>PS2X_lib.h</span><span>PS2X_lib.cpp</span>
+          <span>IRremote.h</span><span>IRremote.cpp</span>
+          <span>keymap.h</span><span>Keymap.cpp</span>
+          <span>Buzzer.h</span><span>Buzzer.cpp</span>
+          <span>RGBLed.h</span><span>RGBLed.cpp</span>
+          <span>Sounds.h</span>
+          <span>nRF24L01.h</span><span>nRF24L01.cpp</span>
+          <span>PinChangeInt.h</span>
+        </div>
+        <ol class="steps" start="4">
+          <li>用 Arduino IDE 打開資料夾裡的 .ino，按左上角「✓」驗證編譯，沒有紅字錯誤就可以燒錄了。</li>
+        </ol>
+        <p class="note ok">這 12 個檔案就是完整的一組，不需要另外安裝 Makeblock 或其他官方函式庫。只要把上面這份清單跟 .ino 放進同一個資料夾，換到全新的電腦、只裝 Arduino IDE 也能直接編譯。</p>
+      </div>
+    </div>
+  </details>
+
+  <div class="grid">
+    <div class="panel">
+      <header>
+        <h2>手把配置</h2>
+        <span class="hint">點一顆按鍵或搖桿軸開始設定</span>
+      </header>
+
+      <div class="pad" id="pad">
+        <div class="area-l2"><button class="hot" data-btn="PSB_L2">L2 <span class="dot"></span></button></div>
+        <div class="area-r2"><button class="hot" data-btn="PSB_R2">R2 <span class="dot"></span></button></div>
+        <div class="area-l1"><button class="hot" data-btn="PSB_L1">L1 <span class="dot"></span></button></div>
+        <div class="area-r1"><button class="hot" data-btn="PSB_R1">R1 <span class="dot"></span></button></div>
+
+        <div class="area-dpad">
+          <div class="dpad-grid">
+            <button class="hot dpad-up" data-btn="PSB_PAD_UP">▲</button>
+            <button class="hot dpad-left" data-btn="PSB_PAD_LEFT">◀</button>
+            <button class="hot dpad-right" data-btn="PSB_PAD_RIGHT">▶</button>
+            <button class="hot dpad-down" data-btn="PSB_PAD_DOWN">▼</button>
+          </div>
+        </div>
+
+        <div class="area-center">
+          <div class="center-cluster">
+            <button class="hot" data-btn="PSB_SELECT" style="max-width:100px;">SELECT</button>
+            <button class="hot" data-btn="PSB_START" style="max-width:100px;">START</button>
+          </div>
+        </div>
+
+        <div class="area-face">
+          <div class="face-grid">
+            <button class="hot face face-tri clr-tri" data-btn="PSB_TRIANGLE"><span class="glyph">△</span></button>
+            <button class="hot face face-sq clr-sq" data-btn="PSB_SQUARE"><span class="glyph">□</span></button>
+            <button class="hot face face-ci clr-ci" data-btn="PSB_CIRCLE"><span class="glyph">○</span></button>
+            <button class="hot face face-cr clr-cr" data-btn="PSB_CROSS"><span class="glyph">✕</span></button>
+          </div>
+        </div>
+
+        <div class="area-lstick">
+          <div class="stick">
+            <div class="stick-dial">L3</div>
+            <div class="stick-axes">
+              <button class="hot" data-axis="PSS_LX">X <span class="dot"></span></button>
+              <button class="hot" data-axis="PSS_LY">Y <span class="dot"></span></button>
+            </div>
+            <button class="hot" data-btn="PSB_L3" style="max-width:100px;">L3 按下 <span class="dot"></span></button>
+          </div>
+        </div>
+
+        <div class="area-rstick">
+          <div class="stick">
+            <div class="stick-dial">R3</div>
+            <div class="stick-axes">
+              <button class="hot" data-axis="PSS_RX">X <span class="dot"></span></button>
+              <button class="hot" data-axis="PSS_RY">Y <span class="dot"></span></button>
+            </div>
+            <button class="hot" data-btn="PSB_R3" style="max-width:100px;">R3 按下 <span class="dot"></span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="dot" style="background:var(--ok);"></span>已設定動作</span>
+        <span><span class="dot" style="background:var(--ink-faint);"></span>尚未設定</span>
+        <span><span class="dot" style="background:var(--accent); border-radius:2px;"></span>目前選取中</span>
+      </div>
+
+      <div class="inspector" id="inspector">
+        <div class="empty">← 點上面任一顆按鍵或搖桿軸，開始設定它的動作</div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="panel">
+        <header>
+          <h2>硬體對照表</h2>
+          <span class="hint">V3 板只有 4 顆伺服，其餘板 8 顆</span>
+        </header>
+        <div class="board-row">
+          <div class="field">
+            <label for="boardVersion">擴充板版本</label>
+            <select id="boardVersion">
+              <option value="3">V3</option>
+              <option value="4">V4</option>
+              <option value="5" selected>V5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="boardAddr">I2C 位址</label>
+            <input type="text" id="boardAddr" value="0x60">
+          </div>
+          <div class="field">
+            <label for="boardBaud">序列埠鮑率</label>
+            <select id="boardBaud">
+              <option value="9600" selected>9600</option>
+              <option value="115200">115200</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:.9rem; margin-bottom:8px;">直流馬達（M1–M4）</h3>
+          <div class="table-wrap">
+            <table class="devtable" id="motorTable">
+              <thead><tr><th>插槽</th><th>變數名稱</th><th title="放開按鍵或搖桿回到中間後，馬達要怎麼停下來：煞車 BRAKE＝馬達立刻用力抗力停住（急停，滑行距離短）；放開 RELEASE＝馬達直接斷電不控制，靠慣性慢慢滑行停下。">放開時動作 <span style="cursor:help; color:var(--ink-faint); font-weight:400;" title="放開按鍵或搖桿回到中間後，馬達要怎麼停下來：煞車 BRAKE＝馬達立刻用力抗力停住（急停，滑行距離短）；放開 RELEASE＝馬達直接斷電不控制，靠慣性慢慢滑行停下。">ⓘ</span></th><th>用途備註</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:.9rem; margin-bottom:8px;">搖桿轉向模式</h3>
+          <div class="two-col" id="driveModeCards" style="margin-top:8px; align-items:stretch;">
+            <button type="button" class="btn drive-card" id="driveModeRcBtn">
+              <strong>遙控車模式</strong>
+              <svg viewBox="0 0 260 100" style="width:100%; height:80px;">
+                <circle cx="38" cy="52" r="22" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"></circle>
+                <circle cx="38" cy="44" r="9" fill="var(--accent)"></circle>
+                <line x1="38" y1="22" x2="38" y2="82" stroke="var(--ink-faint)" stroke-width="1.5"></line>
+                <polygon points="38,16 33,25 43,25" fill="var(--ink-faint)"></polygon>
+                <polygon points="38,88 33,79 43,79" fill="var(--ink-faint)"></polygon>
+                <text x="38" y="97" text-anchor="middle" font-size="10" fill="var(--ink-soft)">前後＝速度</text>
+
+                <circle cx="100" cy="52" r="22" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"></circle>
+                <circle cx="108" cy="52" r="9" fill="var(--accent)"></circle>
+                <line x1="72" y1="52" x2="128" y2="52" stroke="var(--ink-faint)" stroke-width="1.5"></line>
+                <polygon points="66,52 75,47 75,57" fill="var(--ink-faint)"></polygon>
+                <polygon points="134,52 125,47 125,57" fill="var(--ink-faint)"></polygon>
+                <text x="100" y="97" text-anchor="middle" font-size="10" fill="var(--ink-soft)">左右＝轉向</text>
+
+                <line x1="140" y1="52" x2="178" y2="52" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3,3"></line>
+                <polygon points="184,52 175,47 175,57" fill="var(--accent)"></polygon>
+                <text x="160" y="34" text-anchor="middle" font-size="9" fill="var(--accent)">混合</text>
+
+                <rect x="196" y="20" width="46" height="18" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"></rect>
+                <text x="219" y="33" text-anchor="middle" font-size="10" fill="var(--ink)">左輪</text>
+                <rect x="196" y="62" width="46" height="18" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"></rect>
+                <text x="219" y="75" text-anchor="middle" font-size="10" fill="var(--ink)">右輪</text>
+              </svg>
+              <span class="note" style="margin:0;">單一搖桿像遙控車一樣直接推：推前後控速度、扭左右控轉向，兩顆驅動輪自動混合輸出。</span>
+            </button>
+            <button type="button" class="btn drive-card" id="driveModeTankBtn">
+              <strong>戰車模式</strong>
+              <svg viewBox="0 0 260 100" style="width:100%; height:80px;">
+                <line x1="130" y1="8" x2="130" y2="92" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,3"></line>
+
+                <circle cx="52" cy="30" r="18" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"></circle>
+                <circle cx="52" cy="23" r="7" fill="var(--accent)"></circle>
+                <line x1="52" y1="6" x2="52" y2="54" stroke="var(--ink-faint)" stroke-width="1.5"></line>
+                <polygon points="52,2 47,10 57,10" fill="var(--ink-faint)"></polygon>
+                <polygon points="52,58 47,50 57,50" fill="var(--ink-faint)"></polygon>
+                <line x1="52" y1="48" x2="52" y2="72" stroke="var(--accent)" stroke-width="1.5"></line>
+                <rect x="29" y="72" width="46" height="18" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"></rect>
+                <text x="52" y="85" text-anchor="middle" font-size="10" fill="var(--ink)">左輪</text>
+
+                <circle cx="208" cy="30" r="18" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"></circle>
+                <circle cx="208" cy="23" r="7" fill="var(--accent)"></circle>
+                <line x1="208" y1="6" x2="208" y2="54" stroke="var(--ink-faint)" stroke-width="1.5"></line>
+                <polygon points="208,2 203,10 213,10" fill="var(--ink-faint)"></polygon>
+                <polygon points="208,58 203,50 213,50" fill="var(--ink-faint)"></polygon>
+                <line x1="208" y1="48" x2="208" y2="72" stroke="var(--accent)" stroke-width="1.5"></line>
+                <rect x="185" y="72" width="46" height="18" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"></rect>
+                <text x="208" y="85" text-anchor="middle" font-size="10" fill="var(--ink)">右輪</text>
+              </svg>
+              <span class="note" style="margin:0;">兩支搖桿各自獨立：左搖桿只控左輪、右搖桿只控右輪，跟開戰車一樣直覺。</span>
+            </button>
+          </div>
+
+          <div id="rcSettingsBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <div class="two-col">
+              <div class="field"><label>右輪馬達</label><select id="rcRight"></select></div>
+              <div class="field"><label>左輪馬達</label><select id="rcLeft"></select></div>
+            </div>
+          </div>
+
+          <div id="tankSettingsBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <div class="two-col">
+              <div class="field"><label>左輪馬達</label><select id="tankLeft"></select></div>
+              <div class="field"><label>右輪馬達</label><select id="tankRight"></select></div>
+            </div>
+            <p class="note">這兩顆馬達跟遙控車模式選的是各自獨立的設定，不會互相覆蓋。</p>
+          </div>
+
+          <div id="deadzoneBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <div class="two-col">
+              <div class="field"><label>Y 軸死區（左／右搖桿 Y，兩種模式共用）</label>
+                <div class="range-row"><input type="range" id="dzY" min="0" max="60" value="20"><span class="val" id="dzYVal">±20</span></div>
+              </div>
+              <div class="field" id="dzXField"><label>X 軸死區（右搖桿 X，僅遙控車模式使用）</label>
+                <div class="range-row"><input type="range" id="dzX" min="0" max="60" value="20"><span class="val" id="dzXVal">±20</span></div>
+              </div>
+            </div>
+            <p class="note">老搖桿靜止時常常回不到剛好正中間，死區範圍內都當作沒動、直接煞車；範圍太小容易沒碰也在抖，太大則搖桿要推比較多才會開始動，建議先從 ±20 開始，之後照實際手感再調整。</p>
+          </div>
+
+          <details id="practiceBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <summary style="cursor:pointer; font-weight:600; font-size:.84rem; color:var(--ink-soft);">進階：練習模式（限速，適合新手）</summary>
+            <div style="margin-top:8px;">
+              <label class="check"><input type="checkbox" id="pmEnable"> 啟用練習模式（所有馬達最高速度都會被限制）</label>
+              <div class="field" id="pmPercentField" style="margin-top:8px;">
+                <label>最高速度上限</label>
+                <div class="range-row"><input type="range" id="pmPercent" min="20" max="100" value="60"><span class="val" id="pmPercentVal">60%</span></div>
+              </div>
+              <p class="note">開啟後，產生／下載的程式會把所有馬達速度都壓在這個百分比以內，讓新手先熟悉操作手感，練習夠了再關掉這個選項、下載全速版本。</p>
+            </div>
+          </details>
+
+          <details id="breatheBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <summary style="cursor:pointer; font-weight:600; font-size:.84rem; color:var(--ink-soft);">進階：呼吸燈車號（多台車放一起時分辨用）</summary>
+            <div style="margin-top:8px;">
+              <label class="check"><input type="checkbox" id="brEnable"> 啟用呼吸燈車號</label>
+              <div class="field" id="brCarField" style="margin-top:8px;">
+                <label>車號（數字越大，呼吸越快）</label>
+                <select id="brCar">
+                  <option value="1">1 號（最慢，約 4 秒一輪）</option>
+                  <option value="2">2 號（約 2.7 秒一輪）</option>
+                  <option value="3">3 號（約 1.8 秒一輪）</option>
+                  <option value="4">4 號（最快，約 1.2 秒一輪）</option>
+                </select>
+              </div>
+              <p class="note">開啟後，車上的燈會慢慢「呼吸」：戰車模式是深紅到粉紅，遙控車模式是深綠到淺綠，顏色仍然代表模式，呼吸快慢代表車號。兩台車放在一起時，看呼吸節奏就分得出來。手把斷線煞車時，燈會改成急促閃紅。沒勾選就維持原本的恆亮紅燈或綠燈。</p>
+              <p class="note">需要使用「遙控車模式」或「戰車模式」才有燈號；選「手動」模式時沒有模式燈，這個選項不會有作用。</p>
+            </div>
+          </details>
+
+          <details id="advancedBox" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <summary style="cursor:pointer; font-weight:600; font-size:.84rem; color:var(--ink-soft);">進階：方向鍵即時切換模式</summary>
+            <div style="margin-top:8px;">
+              <label class="check"><input type="checkbox" id="msEnable"> 支援用方向鍵即時切換「遙控車模式／戰車模式」</label>
+              <div class="two-col" id="msPickers" style="margin-top:8px;">
+                <div class="field"><label>切成遙控車模式的按鍵</label><select id="msMixKey"></select></div>
+                <div class="field"><label>切成戰車模式的按鍵</label><select id="msTankKey"></select></div>
+              </div>
+              <p class="note">開啟後可以用方向鍵在兩種模式之間即時切換，不用重新燒錄程式；兩種模式各自用自己上面設定的馬達與死區。</p>
+            </div>
+          </details>
+
+          <p class="note" style="margin-top:10px;"><button type="button" class="btn ghost small" id="manualModeBtn">不用這兩種模式，自己手動逐軸設定馬達</button></p>
+        </div>
+
+        <div>
+          <h3 style="font-size:.9rem; margin-bottom:8px;">伺服馬達（S1–S8）</h3>
+          <div class="table-wrap">
+            <table class="devtable" id="servoTable">
+              <thead><tr><th>接腳</th><th>變數名稱</th><th>待機角度</th><th>用途備註</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0; overflow:hidden;">
+        <div class="codepanel">
+          <div class="codebar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="fname">PS2Car_generated.ino</div>
+            <div class="codeactions">
+              <button class="btn" id="btnCopy">複製程式碼</button>
+              <button class="btn primary" id="btnDownload">下載 .ino</button>
+            </div>
+          </div>
+          <pre class="code" id="codeOut"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">產生的程式碼只包含手把讀取與按鍵/搖桿判斷邏輯，燒錄前請確認你的 Arduino 專案裡已經放了 Emakefun_MotorDriver、PS2X_lib 等函式庫檔案。設定會自動保存在這個瀏覽器裡。</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DIR_ZH = {FORWARD:"前進",BACKWARD:"後退",BRAKE:"煞車",RELEASE:"放開"};
+
+  var BUTTONS = [
+    {key:"PSB_PAD_UP", label:"方向鍵上"},
+    {key:"PSB_PAD_DOWN", label:"方向鍵下"},
+    {key:"PSB_PAD_LEFT", label:"方向鍵左"},
+    {key:"PSB_PAD_RIGHT", label:"方向鍵右"},
+    {key:"PSB_TRIANGLE", label:"△ 三角形"},
+    {key:"PSB_CIRCLE", label:"○ 圓形"},
+    {key:"PSB_CROSS", label:"✕ 叉叉"},
+    {key:"PSB_SQUARE", label:"□ 方形"},
+    {key:"PSB_L1", label:"L1"},
+    {key:"PSB_L2", label:"L2"},
+    {key:"PSB_L3", label:"L3（左搖桿按下）"},
+    {key:"PSB_R1", label:"R1"},
+    {key:"PSB_R2", label:"R2"},
+    {key:"PSB_R3", label:"R3（右搖桿按下）"},
+    {key:"PSB_SELECT", label:"SELECT"},
+    {key:"PSB_START", label:"START"}
+  ];
+  var AXES = [
+    {key:"PSS_LX", label:"左搖桿 X 軸"},
+    {key:"PSS_LY", label:"左搖桿 Y 軸"},
+    {key:"PSS_RX", label:"右搖桿 X 軸"},
+    {key:"PSS_RY", label:"右搖桿 Y 軸"}
+  ];
+  var BTN_KEYS = BUTTONS.map(function(b){return b.key;});
+  var AXIS_KEYS = AXES.map(function(a){return a.key;});
+  var STORAGE_KEY = "ps2-config-bench-v2";
+
+  function defaultState(){
+    var buttons = {};
+    BTN_KEYS.forEach(function(k){ buttons[k] = {type:"none"}; });
+    var axes = {};
+    AXIS_KEYS.forEach(function(k){ axes[k] = {type:"none"}; });
+
+    // 以下預設值比照 lectur.ino（目前唯一實測能動的版本）還原
+    buttons.PSB_TRIANGLE = {type:"servo", targets:[{id:"S3", angle:135}]};
+    buttons.PSB_CROSS    = {type:"servo", targets:[{id:"S3", angle:40}]};
+    buttons.PSB_SQUARE   = {type:"servo", targets:[{id:"S1", angle:115}]};
+    buttons.PSB_CIRCLE   = {type:"servo", targets:[{id:"S1", angle:35}]};
+    buttons.PSB_R1 = {type:"motor", targets:[{id:"M3", dir:"BACKWARD", speed:255}]};
+    buttons.PSB_R2 = {type:"motor", targets:[{id:"M3", dir:"FORWARD", speed:255}]};
+    buttons.PSB_L1 = {type:"motor", targets:[{id:"M4", dir:"FORWARD", speed:255}]};
+    buttons.PSB_L2 = {type:"motor", targets:[{id:"M4", dir:"BACKWARD", speed:120}]};
+
+    axes.PSS_LX = {type:"servo", targets:[{id:"S4", min:60, max:90, invert:false}]};
+    // PSS_LY / PSS_RX 由「雙搖桿混合轉向」(diagonalDrive) 直接接管，不走一般單軸設定
+
+    return {
+      board:{ version:5, addr:"0x60", baud:9600 },
+      motors:[
+        {id:"M1", slot:1, name:"RW", note:"搖桿混控驅動輪", releaseAction:"BRAKE"},
+        {id:"M2", slot:2, name:"LW", note:"搖桿混控驅動輪", releaseAction:"BRAKE"},
+        {id:"M3", slot:3, name:"RD", note:"R1/R2 按鍵控制", releaseAction:"BRAKE"},
+        {id:"M4", slot:4, name:"FD", note:"L1/L2 按鍵控制", releaseAction:"BRAKE"}
+      ],
+      servos:[
+        {id:"S1", slot:1, name:"Servo1", idle:75, note:"方形/圓形鍵"},
+        {id:"S2", slot:2, name:"Servo2", idle:75, note:""},
+        {id:"S3", slot:3, name:"Servo3", idle:75, note:"三角/叉叉鍵"},
+        {id:"S4", slot:4, name:"Servo4", idle:74, note:"左搖桿X軸"},
+        {id:"S5", slot:7, name:"Servo5", idle:74, note:""},
+        {id:"S6", slot:8, name:"Servo6", idle:90, note:""},
+        {id:"S7", slot:5, name:"Servo7", idle:70, note:""},
+        {id:"S8", slot:6, name:"Servo8", idle:90, note:""}
+      ],
+      buttons: buttons,
+      axes: axes,
+      driveMode: "tank",
+      rcDrive:{ rightMotorId:"M1", leftMotorId:"M2" },
+      tankDrive:{ rightMotorId:"M1", leftMotorId:"M2" },
+      deadzone:{ x:20, y:20 },
+      modeSwitch:{ enabled:true, mixKey:"PSB_PAD_UP", tankKey:"PSB_PAD_DOWN" },
+      practiceMode:{ enabled:false, percent:60 },
+      breathe:{ enabled:false, car:1 }
+    };
+  }
+
+  // 舊版資料格式是單一 target（字串），新版改成 targets（陣列），讓一顆按鍵/搖桿軸能同時連動多個裝置。
+  // 讀到舊格式就直接重置成「無」，避免格式不合造成畫面壞掉。
+  function sanitizeAssignment(cfg){
+    if(!cfg || cfg.type === "none") return {type:"none"};
+    if(!Array.isArray(cfg.targets) || cfg.targets.length === 0) return {type:"none"};
+    return cfg;
+  }
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return defaultState();
+      var parsed = JSON.parse(raw);
+      var base = defaultState();
+      BTN_KEYS.forEach(function(k){
+        parsed.buttons = parsed.buttons || {};
+        parsed.buttons[k] = sanitizeAssignment(parsed.buttons[k]);
+      });
+      AXIS_KEYS.forEach(function(k){
+        parsed.axes = parsed.axes || {};
+        parsed.axes[k] = sanitizeAssignment(parsed.axes[k]);
+      });
+      if(!parsed.motors) parsed.motors = base.motors;
+      parsed.motors.forEach(function(m){ if(!m.releaseAction) m.releaseAction = "BRAKE"; });
+      if(!parsed.servos) parsed.servos = base.servos;
+      if(!parsed.board) parsed.board = base.board;
+      if(!parsed.driveMode || !parsed.rcDrive || !parsed.tankDrive || !parsed.deadzone){
+        var oldDD = parsed.diagonalDrive;
+        parsed.driveMode = (oldDD && oldDD.enabled) ? "rc" : "manual";
+        parsed.rcDrive = { rightMotorId: (oldDD && oldDD.rightMotorId) || base.rcDrive.rightMotorId, leftMotorId: (oldDD && oldDD.leftMotorId) || base.rcDrive.leftMotorId };
+        parsed.tankDrive = base.tankDrive;
+        parsed.deadzone = (oldDD && oldDD.deadzone) || base.deadzone;
+        delete parsed.diagonalDrive;
+      }
+      if(!parsed.modeSwitch) parsed.modeSwitch = base.modeSwitch;
+      if(!parsed.practiceMode) parsed.practiceMode = base.practiceMode;
+      if(!parsed.breathe) parsed.breathe = base.breathe;
+      return parsed;
+    }catch(e){ return defaultState(); }
+  }
+
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ /* ignore */ }
+  }
+
+  var state = loadState();
+  var selected = null; // {kind:'btn'|'axis', key:'PSB_R1'}
+
+  function byId(id){ return document.getElementById(id); }
+
+  function toIdent(str, fallback){
+    var s = (str||"").trim().replace(/[^A-Za-z0-9_]/g, "_");
+    if(!s || /^[0-9]/.test(s)) s = fallback;
+    return s;
+  }
+
+  function clamp(n, lo, hi){ n = Number(n); if(isNaN(n)) n = lo; return Math.min(hi, Math.max(lo, n)); }
+
+  // ---------- rendering: hardware tables ----------
+  function servoLimit(){ return Number(state.board.version) === 3 ? 4 : 8; }
+
+  function renderDeviceTables(){
+    var mBody = byId("motorTable").querySelector("tbody");
+    mBody.innerHTML = "";
+    state.motors.forEach(function(m, idx){
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="slotcol">M' + m.slot + '</td>' +
+        '<td><input type="text" data-motor-name="' + idx + '" value="' + m.name + '"></td>' +
+        '<td><select data-motor-release="' + idx + '">' +
+          '<option value="BRAKE"' + (m.releaseAction!=="RELEASE"?" selected":"") + '>煞車 BRAKE</option>' +
+          '<option value="RELEASE"' + (m.releaseAction==="RELEASE"?" selected":"") + '>放開 RELEASE</option>' +
+        '</select></td>' +
+        '<td><input type="text" data-motor-note="' + idx + '" value="' + (m.note||"") + '"></td>';
+      mBody.appendChild(tr);
+    });
+
+    var sBody = byId("servoTable").querySelector("tbody");
+    sBody.innerHTML = "";
+    var limit = servoLimit();
+    state.servos.forEach(function(s, idx){
+      var disabled = idx >= limit;
+      var tr = document.createElement("tr");
+      if(disabled) tr.className = "disabled";
+      tr.innerHTML =
+        '<td class="slotcol"><input type="number" min="1" max="8" data-servo-slot="' + idx + '" value="' + s.slot + '" style="width:52px;" ' + (disabled?"disabled":"") + '></td>' +
+        '<td><input type="text" data-servo-name="' + idx + '" value="' + s.name + '" ' + (disabled?"disabled":"") + '></td>' +
+        '<td><input type="number" min="0" max="180" data-servo-idle="' + idx + '" value="' + s.idle + '" style="width:60px;" ' + (disabled?"disabled":"") + '></td>' +
+        '<td><input type="text" data-servo-note="' + idx + '" value="' + (s.note||"") + '" ' + (disabled?"disabled":"") + '></td>';
+      sBody.appendChild(tr);
+    });
+
+    byId("boardVersion").value = String(state.board.version);
+    byId("boardAddr").value = state.board.addr;
+    byId("boardBaud").value = String(state.board.baud);
+
+    var driveMode = state.driveMode || "rc";
+    var rc = state.rcDrive || {rightMotorId:state.motors[0].id, leftMotorId:(state.motors[1]||state.motors[0]).id};
+    var tank = state.tankDrive || {rightMotorId:state.motors[0].id, leftMotorId:(state.motors[1]||state.motors[0]).id};
+    byId("driveModeRcBtn").classList.toggle("on", driveMode === "rc");
+    byId("driveModeTankBtn").classList.toggle("on", driveMode === "tank");
+    byId("rcRight").innerHTML = motorOptions(rc.rightMotorId);
+    byId("rcLeft").innerHTML = motorOptions(rc.leftMotorId);
+    byId("tankLeft").innerHTML = motorOptions(tank.leftMotorId);
+    byId("tankRight").innerHTML = motorOptions(tank.rightMotorId);
+    byId("rcSettingsBox").style.display = driveMode === "rc" ? "" : "none";
+    byId("tankSettingsBox").style.display = driveMode === "tank" ? "" : "none";
+    var driveActive = driveMode === "rc" || driveMode === "tank";
+    byId("deadzoneBox").style.display = driveActive ? "" : "none";
+    byId("dzXField").style.display = driveMode === "rc" ? "" : "none";
+    byId("advancedBox").style.display = driveActive ? "" : "none";
+    byId("manualModeBtn").style.display = driveMode === "manual" ? "none" : "";
+
+    var ms = state.modeSwitch || {enabled:false, mixKey:"PSB_PAD_UP", tankKey:"PSB_PAD_DOWN"};
+    byId("msEnable").checked = !!ms.enabled;
+    byId("msMixKey").innerHTML = buttonOptionsList(ms.mixKey);
+    byId("msTankKey").innerHTML = buttonOptionsList(ms.tankKey);
+    byId("msPickers").style.opacity = ms.enabled ? "1" : ".45";
+
+    var dz = state.deadzone || {x:20, y:20};
+    byId("dzY").value = dz.y;
+    byId("dzX").value = dz.x;
+    byId("dzYVal").textContent = "±" + dz.y;
+    byId("dzXVal").textContent = "±" + dz.x;
+
+    var pm = state.practiceMode || {enabled:false, percent:60};
+    byId("pmEnable").checked = !!pm.enabled;
+    byId("pmPercent").value = pm.percent;
+    byId("pmPercentVal").textContent = pm.percent + "%";
+    byId("pmPercentField").style.opacity = pm.enabled ? "1" : ".45";
+
+    var br = state.breathe || {enabled:false, car:1};
+    byId("brEnable").checked = !!br.enabled;
+    byId("brCar").value = String(br.car || 1);
+    byId("brCarField").style.opacity = br.enabled ? "1" : ".45";
+  }
+
+  function wireDeviceTables(){
+    var motorHandler = function(e){
+      var t = e.target;
+      if(t.dataset.motorName !== undefined){ state.motors[+t.dataset.motorName].name = toIdent(t.value, "M"+(+t.dataset.motorName+1)); }
+      if(t.dataset.motorNote !== undefined){ state.motors[+t.dataset.motorNote].note = t.value; }
+      if(t.dataset.motorRelease !== undefined){ state.motors[+t.dataset.motorRelease].releaseAction = t.value; }
+      onStateChanged();
+    };
+    byId("motorTable").addEventListener("input", motorHandler);
+    byId("motorTable").addEventListener("change", motorHandler);
+    byId("servoTable").addEventListener("input", function(e){
+      var t = e.target;
+      if(t.dataset.servoName !== undefined){ state.servos[+t.dataset.servoName].name = toIdent(t.value, "Servo"+(+t.dataset.servoName+1)); }
+      if(t.dataset.servoNote !== undefined){ state.servos[+t.dataset.servoNote].note = t.value; }
+      if(t.dataset.servoIdle !== undefined){ state.servos[+t.dataset.servoIdle].idle = clamp(t.value,0,180); }
+      if(t.dataset.servoSlot !== undefined){ state.servos[+t.dataset.servoSlot].slot = clamp(t.value,1,8); }
+      onStateChanged();
+    });
+    byId("boardVersion").addEventListener("change", function(e){ state.board.version = Number(e.target.value); onStateChanged(true); });
+    byId("boardAddr").addEventListener("change", function(e){ state.board.addr = e.target.value.trim() || "0x60"; onStateChanged(); });
+    byId("boardBaud").addEventListener("change", function(e){ state.board.baud = Number(e.target.value); onStateChanged(); });
+
+    byId("driveModeRcBtn").addEventListener("click", function(){
+      state.driveMode = "rc";
+      onStateChanged(true);
+    });
+    byId("driveModeTankBtn").addEventListener("click", function(){
+      state.driveMode = "tank";
+      onStateChanged(true);
+    });
+    byId("manualModeBtn").addEventListener("click", function(){
+      state.driveMode = "manual";
+      onStateChanged(true);
+    });
+    byId("rcRight").addEventListener("change", function(e){ state.rcDrive.rightMotorId = e.target.value; onStateChanged(); });
+    byId("rcLeft").addEventListener("change", function(e){ state.rcDrive.leftMotorId = e.target.value; onStateChanged(); });
+    byId("tankLeft").addEventListener("change", function(e){ state.tankDrive.leftMotorId = e.target.value; onStateChanged(); });
+    byId("tankRight").addEventListener("change", function(e){ state.tankDrive.rightMotorId = e.target.value; onStateChanged(); });
+
+    byId("msEnable").addEventListener("change", function(e){
+      if(!state.modeSwitch) state.modeSwitch = {enabled:false, mixKey:"PSB_PAD_UP", tankKey:"PSB_PAD_DOWN"};
+      state.modeSwitch.enabled = e.target.checked;
+      onStateChanged(true);
+    });
+    byId("msMixKey").addEventListener("change", function(e){ state.modeSwitch.mixKey = e.target.value; onStateChanged(); });
+    byId("msTankKey").addEventListener("change", function(e){ state.modeSwitch.tankKey = e.target.value; onStateChanged(); });
+
+    byId("dzY").addEventListener("input", function(e){
+      if(!state.deadzone) state.deadzone = {x:20, y:20};
+      state.deadzone.y = Number(e.target.value);
+      byId("dzYVal").textContent = "±" + e.target.value;
+      onStateChanged();
+    });
+    byId("dzX").addEventListener("input", function(e){
+      if(!state.deadzone) state.deadzone = {x:20, y:20};
+      state.deadzone.x = Number(e.target.value);
+      byId("dzXVal").textContent = "±" + e.target.value;
+      onStateChanged();
+    });
+
+    byId("pmEnable").addEventListener("change", function(e){
+      if(!state.practiceMode) state.practiceMode = {enabled:false, percent:60};
+      state.practiceMode.enabled = e.target.checked;
+      byId("pmPercentField").style.opacity = e.target.checked ? "1" : ".45";
+      onStateChanged();
+    });
+    byId("pmPercent").addEventListener("input", function(e){
+      if(!state.practiceMode) state.practiceMode = {enabled:false, percent:60};
+      state.practiceMode.percent = Number(e.target.value);
+      byId("pmPercentVal").textContent = e.target.value + "%";
+      onStateChanged();
+    });
+
+    byId("brEnable").addEventListener("change", function(e){
+      if(!state.breathe) state.breathe = {enabled:false, car:1};
+      state.breathe.enabled = e.target.checked;
+      byId("brCarField").style.opacity = e.target.checked ? "1" : ".45";
+      onStateChanged();
+    });
+    byId("brCar").addEventListener("change", function(e){
+      if(!state.breathe) state.breathe = {enabled:false, car:1};
+      state.breathe.car = Number(e.target.value);
+      onStateChanged();
+    });
+  }
+
+  // ---------- rendering: pad dots ----------
+  function isAssignedButton(k){ return state.buttons[k] && state.buttons[k].type !== "none"; }
+  function isAssignedAxis(k){
+    if(state.driveMode === "rc" && (k === "PSS_LY" || k === "PSS_RX")) return true;
+    if(state.driveMode === "tank" && (k === "PSS_LY" || k === "PSS_RY")) return true;
+    return state.axes[k] && state.axes[k].type !== "none";
+  }
+  function isDriveLockedAxis(k){
+    if(state.driveMode === "rc" && (k === "PSS_LY" || k === "PSS_RX")) return true;
+    if(state.driveMode === "tank" && (k === "PSS_LY" || k === "PSS_RY")) return true;
+    return false;
+  }
+
+  function renderPad(){
+    document.querySelectorAll("#pad [data-btn]").forEach(function(el){
+      var k = el.dataset.btn;
+      el.classList.toggle("assigned", isAssignedButton(k));
+      el.classList.toggle("active", selected && selected.kind === "btn" && selected.key === k);
+    });
+    document.querySelectorAll("#pad [data-axis]").forEach(function(el){
+      var k = el.dataset.axis;
+      var locked = isDriveLockedAxis(k);
+      el.classList.toggle("assigned", isAssignedAxis(k));
+      el.classList.toggle("active", selected && selected.kind === "axis" && selected.key === k);
+      el.classList.toggle("locked", locked);
+      el.title = locked ? ("已由「" + (state.driveMode === "rc" ? "遙控車模式" : "戰車模式") + "」搖桿轉向設定接管，不能在這裡個別設定") : "";
+    });
+  }
+
+  // ---------- inspector ----------
+  function motorOptions(sel){
+    return state.motors.map(function(m){
+      return '<option value="' + m.id + '"' + (m.id===sel?" selected":"") + '>M' + m.slot + ' · ' + m.name + (m.note?(" · "+m.note):"") + '</option>';
+    }).join("");
+  }
+  function servoOptions(sel){
+    var limit = servoLimit();
+    return state.servos.slice(0, limit).map(function(s){
+      return '<option value="' + s.id + '"' + (s.id===sel?" selected":"") + '>' + s.name + (s.note?(" · "+s.note):"") + '</option>';
+    }).join("");
+  }
+  function buttonOptionsList(sel){
+    return BUTTONS.map(function(b){
+      return '<option value="' + b.key + '"' + (b.key===sel?" selected":"") + '>' + b.label + '</option>';
+    }).join("");
+  }
+
+  function renderInspector(){
+    var box = byId("inspector");
+    if(!selected){
+      box.innerHTML = '<div class="empty">← 點上面任一顆按鍵或搖桿軸，開始設定它的動作</div>';
+      return;
+    }
+    if(selected.kind === "btn"){
+      renderButtonInspector(box, selected.key);
+    } else {
+      renderAxisInspector(box, selected.key);
+    }
+  }
+
+  function labelFor(kind, key){
+    var list = kind === "btn" ? BUTTONS : AXES;
+    var f = list.filter(function(x){ return x.key === key; })[0];
+    return f ? f.label : key;
+  }
+
+  // ---------- shared target-card helpers (讓一顆按鍵/搖桿軸能同時連動多個馬達或伺服馬達) ----------
+  function rangeRow(f, idx, min, max, value, opts){
+    opts = opts || {};
+    return '<div class="range-row"><input type="range" data-f="' + f + '" data-idx="' + idx + '"' +
+      (opts.suffix ? ' data-suffix="' + opts.suffix + '"' : "") +
+      (opts.prefix ? ' data-prefix="' + opts.prefix + '"' : "") +
+      ' min="' + min + '" max="' + max + '" value="' + value + '">' +
+      '<span class="val" data-valfor="' + f + '" data-idx="' + idx + '">' + (opts.prefix||"") + value + (opts.suffix||"") + '</span></div>';
+  }
+
+  function targetCardShell(idx, total, bodyHtml){
+    return '<div class="target-card">' +
+      '<div class="target-card-head"><span class="target-num">目標 ' + (idx+1) + '</span>' +
+      (total > 1 ? '<button type="button" class="icon-btn" data-remove="' + idx + '">移除</button>' : '') +
+      '</div>' + bodyHtml + '</div>';
+  }
+
+  function wireTargetCards(box, targets, afterChange){
+    box.querySelectorAll("[data-f]").forEach(function(el){
+      var f = el.dataset.f;
+      var idx = Number(el.dataset.idx);
+      var evtName = (el.tagName === "SELECT" || el.type === "checkbox") ? "change" : "input";
+      el.addEventListener(evtName, function(){
+        if(el.type === "checkbox") targets[idx][f] = el.checked;
+        else if(el.type === "range") targets[idx][f] = Number(el.value);
+        else targets[idx][f] = el.value;
+        var out = box.querySelector('[data-valfor="' + f + '"][data-idx="' + idx + '"]');
+        if(out) out.textContent = (el.dataset.prefix||"") + el.value + (el.dataset.suffix||"");
+        onStateChanged();
+      });
+    });
+    box.querySelectorAll("[data-remove]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        targets.splice(Number(btn.dataset.remove), 1);
+        onStateChanged(true);
+      });
+    });
+    var addBtn = box.querySelector("[data-add]");
+    if(addBtn){
+      addBtn.addEventListener("click", function(){
+        afterChange();
+        onStateChanged(true);
+      });
+    }
+  }
+
+  function renderButtonInspector(box, key){
+    var cfg = state.buttons[key];
+    var type = cfg.type;
+    var html = '<div class="inspector-title"><h3>' + labelFor("btn", key) + '</h3><span class="tag">' + key + '</span></div>';
+    html += '<div class="field"><label>動作類型</label><div class="seg" id="segType">' +
+      '<button data-v="none" class="' + (type==="none"?"on":"") + '">無</button>' +
+      '<button data-v="motor" class="' + (type==="motor"?"on":"") + '">直流馬達</button>' +
+      '<button data-v="servo" class="' + (type==="servo"?"on":"") + '">伺服馬達</button>' +
+      '<button data-v="level" class="' + (type==="level"?"on":"") + '">等級鎖定</button>' +
+      '</div></div>';
+
+    if(type === "motor"){
+      html += '<div class="target-list">' + cfg.targets.map(function(t, idx){
+        var body = '<div class="field"><label>目標馬達</label><select data-f="id" data-idx="' + idx + '">' + motorOptions(t.id) + '</select></div>';
+        body += '<div class="two-col">';
+        body += '<div class="field"><label>按住時動作</label><select data-f="dir" data-idx="' + idx + '">' +
+          ["FORWARD","BACKWARD","BRAKE","RELEASE"].map(function(d){
+            return '<option value="'+d+'"'+(t.dir===d?" selected":"")+'>'+d+'（'+DIR_ZH[d]+'）</option>';
+          }).join("") + '</select></div>';
+        body += '<div class="field"><label>速度</label>' + rangeRow("speed", idx, 0, 255, t.speed==null?255:t.speed) + '</div>';
+        body += '</div>';
+        return targetCardShell(idx, cfg.targets.length, body);
+      }).join("") + '</div>';
+      html += '<button type="button" class="btn ghost small" data-add="1">+ 新增一個同時連動的馬達</button>';
+      html += '<p style="font-size:.78rem; color:var(--ink-faint); margin:0;">放開這顆按鍵時，如果沒有其他按鍵或搖桿還在控制上面這些馬達，會自動執行該馬達在「硬體對照表」設定的放開動作（預設是煞車）。</p>';
+    } else if(type === "servo"){
+      html += '<div class="target-list">' + cfg.targets.map(function(t, idx){
+        var body = '<div class="field"><label>目標伺服馬達</label><select data-f="id" data-idx="' + idx + '">' + servoOptions(t.id) + '</select></div>';
+        body += '<div class="field"><label>按住時角度</label>' + rangeRow("angle", idx, 0, 180, t.angle==null?90:t.angle, {suffix:"°"}) + '</div>';
+        return targetCardShell(idx, cfg.targets.length, body);
+      }).join("") + '</div>';
+      html += '<button type="button" class="btn ghost small" data-add="1">+ 新增一個同時連動的伺服馬達</button>';
+      html += '<p style="font-size:.78rem; color:var(--ink-faint); margin:0;">放開按鍵時會回到每顆伺服馬達設定的「待機角度」（在硬體對照表可調整）。</p>';
+    } else if(type === "level"){
+      html += '<div class="target-list">' + cfg.targets.map(function(t, idx){
+        var body = '<div class="field"><label>目標馬達</label><select data-f="id" data-idx="' + idx + '">' + motorOptions(t.id) + '</select></div>';
+        body += '<div class="two-col">';
+        body += '<div class="field"><label>按下後動作</label><select data-f="dir" data-idx="' + idx + '">' +
+          ["FORWARD","BACKWARD","BRAKE","RELEASE"].map(function(d){
+            return '<option value="'+d+'"'+(t.dir===d?" selected":"")+'>'+d+'（'+DIR_ZH[d]+'）</option>';
+          }).join("") + '</select></div>';
+        body += '<div class="field"><label>速度</label>' + rangeRow("speed", idx, 0, 255, t.speed==null?255:t.speed) + '</div>';
+        body += '</div>';
+        return targetCardShell(idx, cfg.targets.length, body);
+      }).join("") + '</div>';
+      html += '<button type="button" class="btn ghost small" data-add="1">+ 新增一個同時連動的馬達</button>';
+      html += '<p style="font-size:.78rem; color:var(--ink-faint); margin:0;">按下這顆鍵會立刻把上面這些馬達設成這個狀態，<strong>放開不會自動回復</strong>，會一直維持到有其他按鍵（例如另一個等級鍵，或設定「關」的那顆）再次改變它們為止，適合「分等級」這種用法（例如掃地機分低/中/高速）。注意：同一顆馬達不能同時被「直流馬達」（按住式）設定占用，不然那邊每一幀自動執行的放開動作會蓋掉這裡的等級設定。</p>';
+    }
+    box.innerHTML = html;
+
+    box.querySelectorAll("#segType button").forEach(function(b){
+      b.addEventListener("click", function(){
+        var v = b.dataset.v;
+        if(v === "none") state.buttons[key] = {type:"none"};
+        else if(v === "motor") state.buttons[key] = {type:"motor", targets:[{id:(state.motors[0]||{}).id, dir:"FORWARD", speed:255}]};
+        else if(v === "servo") state.buttons[key] = {type:"servo", targets:[{id:(state.servos[0]||{}).id, angle:90}]};
+        else if(v === "level") state.buttons[key] = {type:"level", targets:[{id:(state.motors[0]||{}).id, dir:"FORWARD", speed:255}]};
+        onStateChanged(true);
+      });
+    });
+
+    if(type === "motor" || type === "servo" || type === "level"){
+      wireTargetCards(box, cfg.targets, function(){
+        var pool = (type === "motor" || type === "level") ? state.motors : state.servos.slice(0, servoLimit());
+        var used = cfg.targets.map(function(t){ return t.id; });
+        var next = pool.filter(function(d){ return used.indexOf(d.id) === -1; })[0] || pool[0];
+        if(!next) return;
+        if(type === "motor" || type === "level") cfg.targets.push({id:next.id, dir:"FORWARD", speed:255});
+        else cfg.targets.push({id:next.id, angle:90});
+      });
+    }
+  }
+
+  function renderAxisInspector(box, key){
+    var takenByRc = state.driveMode === "rc" && (key === "PSS_LY" || key === "PSS_RX");
+    var takenByTank = state.driveMode === "tank" && (key === "PSS_LY" || key === "PSS_RY");
+    if(takenByRc || takenByTank){
+      box.innerHTML = '<div class="inspector-title"><h3>' + labelFor("axis", key) + '</h3><span class="tag">' + key + '</span></div>' +
+        '<p class="note">這個軸目前由「硬體對照表 → 搖桿轉向模式」裡的「' + (takenByRc ? "遙控車模式" : "戰車模式") + '」接管，不能在這裡單獨指定。</p>' +
+        '<button type="button" class="btn ghost small" id="diagJumpOff">改成手動逐軸設定（關閉搖桿轉向模式）</button>';
+      box.querySelector("#diagJumpOff").addEventListener("click", function(){
+        state.driveMode = "manual";
+        onStateChanged(true);
+      });
+      return;
+    }
+    var cfg = state.axes[key];
+    var type = cfg.type;
+    var html = '<div class="inspector-title"><h3>' + labelFor("axis", key) + '</h3><span class="tag">' + key + '</span></div>';
+    html += '<div class="field"><label>動作類型</label><div class="seg" id="segType">' +
+      '<button data-v="none" class="' + (type==="none"?"on":"") + '">無</button>' +
+      '<button data-v="motor" class="' + (type==="motor"?"on":"") + '">馬達速度</button>' +
+      '<button data-v="servo" class="' + (type==="servo"?"on":"") + '">伺服角度</button>' +
+      '</div></div>';
+
+    if(type === "motor"){
+      html += '<div class="target-list">' + cfg.targets.map(function(t, idx){
+        var body = '<div class="field"><label>目標馬達</label><select data-f="id" data-idx="' + idx + '">' + motorOptions(t.id) + '</select></div>';
+        body += '<div class="two-col">';
+        body += '<div class="field"><label>中點死區</label>' + rangeRow("deadzone", idx, 0, 60, t.deadzone||0, {prefix:"±"}) + '</div>';
+        body += '<div class="field"><label>最大速度</label>' + rangeRow("maxSpeed", idx, 0, 255, t.maxSpeed==null?100:t.maxSpeed) + '</div>';
+        body += '</div>';
+        body += '<label class="check"><input type="checkbox" data-f="invert" data-idx="' + idx + '" ' + (t.invert?"checked":"") + '> 方向反轉</label>';
+        return targetCardShell(idx, cfg.targets.length, body);
+      }).join("") + '</div>';
+      html += '<button type="button" class="btn ghost small" data-add="1">+ 新增一個同時連動的馬達</button>';
+    } else if(type === "servo"){
+      html += '<div class="target-list">' + cfg.targets.map(function(t, idx){
+        var body = '<div class="field"><label>目標伺服馬達</label><select data-f="id" data-idx="' + idx + '">' + servoOptions(t.id) + '</select></div>';
+        body += '<div class="two-col">';
+        body += '<div class="field"><label>最小角度</label>' + rangeRow("min", idx, 0, 180, t.min==null?60:t.min, {suffix:"°"}) + '</div>';
+        body += '<div class="field"><label>最大角度</label>' + rangeRow("max", idx, 0, 180, t.max==null?90:t.max, {suffix:"°"}) + '</div>';
+        body += '</div>';
+        body += '<label class="check"><input type="checkbox" data-f="invert" data-idx="' + idx + '" ' + (t.invert?"checked":"") + '> 方向反轉</label>';
+        return targetCardShell(idx, cfg.targets.length, body);
+      }).join("") + '</div>';
+      html += '<button type="button" class="btn ghost small" data-add="1">+ 新增一個同時連動的伺服馬達</button>';
+      html += '<p style="font-size:.78rem; color:var(--ink-faint); margin:0;">搖桿角度是連續對應（不是按一下切一次），適合轉向、雲台這類需要漸進控制的伺服馬達。</p>';
+    }
+    box.innerHTML = html;
+
+    box.querySelectorAll("#segType button").forEach(function(b){
+      b.addEventListener("click", function(){
+        var v = b.dataset.v;
+        if(v === "none") state.axes[key] = {type:"none"};
+        else if(v === "motor") state.axes[key] = {type:"motor", targets:[{id:(state.motors[0]||{}).id, deadzone:10, maxSpeed:100, invert:false}]};
+        else if(v === "servo") state.axes[key] = {type:"servo", targets:[{id:(state.servos[0]||{}).id, min:60, max:120, invert:false}]};
+        onStateChanged(true);
+      });
+    });
+
+    if(type === "motor" || type === "servo"){
+      wireTargetCards(box, cfg.targets, function(){
+        var pool = type === "motor" ? state.motors : state.servos.slice(0, servoLimit());
+        var used = cfg.targets.map(function(t){ return t.id; });
+        var next = pool.filter(function(d){ return used.indexOf(d.id) === -1; })[0] || pool[0];
+        if(!next) return;
+        if(type === "motor") cfg.targets.push({id:next.id, deadzone:10, maxSpeed:100, invert:false});
+        else cfg.targets.push({id:next.id, min:60, max:120, invert:false});
+      });
+    }
+  }
+
+  // ---------- code generation ----------
+  function motorById(id){ return state.motors.filter(function(m){return m.id===id;})[0]; }
+  function servoById(id){ return state.servos.filter(function(s){return s.id===id;})[0]; }
+
+  function genSketch(){
+    var L = [];
+    var push = function(s){ L.push(s); };
+
+    var practiceCfg = (state.practiceMode && state.practiceMode.enabled) ? state.practiceMode : null;
+    var practiceCap = practiceCfg ? Math.round(255 * (practiceCfg.percent || 60) / 100) : 255;
+    var driveModeActive = state.driveMode === "rc" || state.driveMode === "tank";
+    var useModeSwitch = !!(driveModeActive && state.modeSwitch && state.modeSwitch.enabled);
+    var breatheOn = !!(driveModeActive && state.breathe && state.breathe.enabled);
+    var breatheCar = breatheOn ? Math.min(4, Math.max(1, Number(state.breathe.car) || 1)) : 1;
+    var breathePeriods = [4000, 2700, 1800, 1200];
+
+    push('#include "Emakefun_MotorDriver.h"');
+    if(driveModeActive){ push('#include "RGBLed.h"'); }
+    if(useModeSwitch){ push('#include "Buzzer.h"'); }
+    push("// 由 PS2 控制配置台自動產生 — 可直接貼上 Arduino IDE 取代原本的 .ino 內容");
+    if(practiceCfg){ push("// 練習模式已啟用：所有馬達最高速度限制為 " + (practiceCfg.percent || 60) + "%（上限 " + practiceCap + "）"); }
+    push("");
+    push("Emakefun_MotorDriver mMotorDriver = Emakefun_MotorDriver(" + state.board.addr + ", MOTOR_DRIVER_BOARD_V" + state.board.version + ");");
+    push("PS2X *ps2x;");
+    push("int psFailCount = 0;  // 連續讀取失敗次數（手把斷線/太遠/沒電偵測用）");
+    if(useModeSwitch){ push("bool tankMode = " + (state.driveMode === "tank" ? "true" : "false") + ";  // 方向鍵切換：false=遙控車模式, true=戰車模式"); }
+    if(driveModeActive){ push("RGBLed statusLed(A1, 1);  // 板載 RGB 燈（A1）：目前模式指示，綠=遙控車, 紅=戰車"); }
+    if(useModeSwitch){ push("Buzzer buzzer(A0);        // 板載蜂鳴器（A0）：切換模式時短嗶確認"); }
+    if(breatheOn){ push("const unsigned long BREATH_PERIOD = " + breathePeriods[breatheCar-1] + ";  // 呼吸燈車號 " + breatheCar + "：一輪的毫秒數，數字越小呼吸越快"); }
+    push("");
+
+    var limit = servoLimit();
+    var activeServos = state.servos.slice(0, limit);
+
+    activeServos.forEach(function(s){ push("int " + s.name + "_IDLE = " + s.idle + ";"); });
+    push("");
+    state.motors.forEach(function(m){
+      push("Emakefun_DCMotor *" + m.name + " = mMotorDriver.getMotor(M" + m.slot + ");" + (m.note ? "  // " + m.note : ""));
+    });
+    push("");
+    activeServos.forEach(function(s){
+      push("Emakefun_Servo *" + s.name + " = mMotorDriver.getServo(" + s.slot + ");" + (s.note ? "  // " + s.note : ""));
+    });
+    push("");
+
+    push("void setup() {");
+    push("  Serial.begin(" + state.board.baud + ");");
+    push("  ps2x = mMotorDriver.getSensor(E_PS2X);");
+    push("  mMotorDriver.begin(50);");
+    state.motors.forEach(function(m){ push("  " + m.name + "->setSpeed(255);"); });
+    activeServos.forEach(function(s){ push("  " + s.name + "->writeServo(" + s.name + "_IDLE);"); });
+    if(driveModeActive){
+      push("  statusLed.setColor(40, 0, 40);  // 開機辨識用：不要太亮的紫燈，閃一下方便跟舊版分辨");
+      push("  statusLed.show();");
+      push("  delay(400);");
+      if(state.driveMode === "tank"){
+        push("  statusLed.setColor(255, 0, 0);  // 開機預設戰車模式=紅燈");
+      } else {
+        push("  statusLed.setColor(0, 255, 0);  // 開機預設遙控車模式=綠燈");
+      }
+      push("  statusLed.show();");
+    }
+    push("}");
+    push("");
+
+    push("void loop() {");
+    push("  static int vibrate = 0;");
+    push("  bool psOk = ps2x->read_gamepad(false, vibrate);");
+    push("  if (psOk) { psFailCount = 0; } else { psFailCount++; }");
+    push("  if (psFailCount >= 3) {");
+    push("    // 手把訊號連續讀取失敗（可能太遠/沒電/斷線）：所有馬達煞車，等訊號恢復再繼續");
+    state.motors.forEach(function(m){ push("    " + m.name + "->run(BRAKE);"); });
+    if(breatheOn){
+      push("    statusLed.setColor(((millis() / 120) % 2) ? 255 : 0, 0, 0);  // 斷線：急促閃紅");
+      push("    statusLed.show();");
+    }
+    push("    return;");
+    push("  }");
+    if(useModeSwitch){
+      push("  if (ps2x->ButtonPressed(" + state.modeSwitch.mixKey + ") && tankMode) {");
+      push("    tankMode = false;");
+      push("    statusLed.setColor(0, 255, 0);  // 遙控車模式=綠燈");
+      push("    statusLed.show();");
+      push("    buzzer.tone(2000, 60);");
+      push("  }");
+      push("  if (ps2x->ButtonPressed(" + state.modeSwitch.tankKey + ") && !tankMode) {");
+      push("    tankMode = true;");
+      push("    statusLed.setColor(255, 0, 0);  // 戰車模式=紅燈");
+      push("    statusLed.show();");
+      push("    buzzer.tone(1000, 60);");
+      push("  }");
+    }
+    if(breatheOn){
+      var tankExpr = useModeSwitch ? "tankMode" : (state.driveMode === "tank" ? "true" : "false");
+      push("  // 呼吸燈：戰車=深紅~粉紅，遙控車=深綠~淺綠；車號越大呼吸越快");
+      push("  {");
+      push("    int t = (int)((millis() % BREATH_PERIOD) * 200UL / BREATH_PERIOD);  // 0..199");
+      push("    if (t > 100) t = 200 - t;                                          // 三角波 0..100..0");
+      push("    if (" + tankExpr + ") {");
+      push("      statusLed.setColor(90 + t * 165 / 100, t * 70 / 100, t * 90 / 100);  // 深紅 -> 粉紅");
+      push("    } else {");
+      push("      statusLed.setColor(t * 80 / 100, 90 + t * 165 / 100, t * 60 / 100);  // 深綠 -> 淺綠");
+      push("    }");
+      push("    statusLed.show();");
+      push("  }");
+    }
+    push("");
+
+    // ---- motors ----
+    state.motors.forEach(function(m){
+      var levelRules = [];
+      BTN_KEYS.forEach(function(k){
+        var c = state.buttons[k];
+        if(!c || c.type !== "level") return;
+        (c.targets||[]).forEach(function(t){ if(t.id === m.id) levelRules.push(Object.assign({key:k}, t)); });
+      });
+
+      var btnRules = [];
+      BTN_KEYS.forEach(function(k){
+        var c = state.buttons[k];
+        if(!c || c.type !== "motor") return;
+        (c.targets||[]).forEach(function(t){ if(t.id === m.id) btnRules.push(Object.assign({key:k}, t)); });
+      });
+
+      var axisRules = [];
+      AXIS_KEYS.forEach(function(k){
+        if(state.driveMode === "rc" && (k === "PSS_LY" || k === "PSS_RX")) return;
+        if(state.driveMode === "tank" && (k === "PSS_LY" || k === "PSS_RY")) return;
+        var c = state.axes[k];
+        if(!c || c.type !== "motor") return;
+        (c.targets||[]).forEach(function(t){ if(t.id === m.id) axisRules.push(Object.assign({key:k}, t)); });
+      });
+
+      if(levelRules.length > 0){
+        push("  // ---- " + m.name + (m.note ? " (" + m.note + ")" : "") + "（等級鎖定：按一下設定，放開不回復）----");
+        if(btnRules.length > 0 || axisRules.length > 0){
+          push("  // ⚠ 這顆馬達同時有一般按住式/搖桿設定，兩者衝突，已忽略那些設定，只保留等級鎖定");
+        }
+        levelRules.forEach(function(r){
+          push("  if (ps2x->ButtonPressed(" + r.key + ")) {");
+          push("    " + m.name + "->run(" + r.dir + ");");
+          if(r.dir === "FORWARD" || r.dir === "BACKWARD"){ push("    " + m.name + "->setSpeed(" + (r.speed==null?255:r.speed) + ");"); }
+          push("  }");
+        });
+        push("");
+        return;
+      }
+
+      if(btnRules.length === 0 && axisRules.length === 0) return;
+
+      push("  // ---- " + m.name + (m.note ? " (" + m.note + ")" : "") + " ----");
+      var branches = [];
+      btnRules.forEach(function(r){
+        var body = ["    " + m.name + "->run(" + r.dir + ");"];
+        if(r.dir === "FORWARD" || r.dir === "BACKWARD"){ body.push("    " + m.name + "->setSpeed(" + (r.speed==null?255:r.speed) + ");"); }
+        branches.push({ cond: "ps2x->Button(" + r.key + ")", body: body });
+      });
+      axisRules.forEach(function(r){
+        var dz = r.deadzone || 0;
+        var maxS = r.maxSpeed == null ? 100 : r.maxSpeed;
+        var dirLow = r.invert ? "BACKWARD" : "FORWARD";
+        var dirHigh = r.invert ? "FORWARD" : "BACKWARD";
+        branches.push({
+          cond: "ps2x->Analog(" + r.key + ") < " + (128 - dz),
+          body: [
+            "    " + m.name + "->run(" + dirLow + ");",
+            "    " + m.name + "->setSpeed(map(ps2x->Analog(" + r.key + "), " + (128 - dz) + ", 0, 0, " + maxS + "));"
+          ]
+        });
+        branches.push({
+          cond: "ps2x->Analog(" + r.key + ") > " + (128 + dz),
+          body: [
+            "    " + m.name + "->run(" + dirHigh + ");",
+            "    " + m.name + "->setSpeed(map(ps2x->Analog(" + r.key + "), " + (128 + dz) + ", 255, 0, " + maxS + "));"
+          ]
+        });
+      });
+
+      branches.forEach(function(b, i){
+        push("  " + (i === 0 ? "if" : "} else if") + " (" + b.cond + ") {");
+        b.body.forEach(push);
+      });
+      push("  } else {");
+      push("    " + m.name + "->run(" + (m.releaseAction || "BRAKE") + ");");
+      push("  }");
+      push("");
+    });
+
+    // ---- 遙控車模式／戰車模式 ----
+    if(driveModeActive){
+      var rcM = state.rcDrive || {};
+      var tankM = state.tankDrive || {};
+      var rcRightM = motorById(rcM.rightMotorId);
+      var rcLeftM = motorById(rcM.leftMotorId);
+      var tankRightM = motorById(tankM.rightMotorId);
+      var tankLeftM = motorById(tankM.leftMotorId);
+      var rcOk = !!(rcRightM && rcLeftM && rcRightM.id !== rcLeftM.id);
+      var tankOk = !!(tankRightM && tankLeftM && tankRightM.id !== tankLeftM.id);
+      var dzInfo = state.deadzone || {x:20, y:20};
+      var dzX = dzInfo.x || 0;
+      var dzY = dzInfo.y || 0;
+
+      var emitTankBody = function(lm, rm, ind){
+        push(ind + "int lyRaw = ps2x->Analog(PSS_LY);");
+        push(ind + "int ly = (abs(lyRaw - 128) <= " + dzY + ") ? 128 : lyRaw;");
+        push(ind + "// 戰車模式：左搖桿Y軸控制" + lm.name + "，右搖桿Y軸控制" + rm.name);
+        push(ind + "if (ly == 128) { " + lm.name + "->run(BRAKE); }");
+        push(ind + "else if (ly < 128) { " + lm.name + "->run(FORWARD); " + lm.name + "->setSpeed(map(ly, 128, 0, 0, 255)); }");
+        push(ind + "else { " + lm.name + "->run(BACKWARD); " + lm.name + "->setSpeed(map(ly, 128, 255, 0, 255)); }");
+        push(ind + "int ryRaw = ps2x->Analog(PSS_RY);");
+        push(ind + "int ry = (abs(ryRaw - 128) <= " + dzY + ") ? 128 : ryRaw;");
+        push(ind + "if (ry == 128) { " + rm.name + "->run(BRAKE); }");
+        push(ind + "else if (ry < 128) { " + rm.name + "->run(FORWARD); " + rm.name + "->setSpeed(map(ry, 128, 0, 0, 255)); }");
+        push(ind + "else { " + rm.name + "->run(BACKWARD); " + rm.name + "->setSpeed(map(ry, 128, 255, 0, 255)); }");
+      };
+
+      var emitRcBody = function(lm, rm, ind){
+        push(ind + "int lyRaw2 = ps2x->Analog(PSS_LY);");
+        push(ind + "int ly = (abs(lyRaw2 - 128) <= " + dzY + ") ? 128 : lyRaw2;");
+        push(ind + "int rxRaw2 = ps2x->Analog(PSS_RX);");
+        push(ind + "int rx = (abs(rxRaw2 - 127) <= " + dzX + ") ? 127 : rxRaw2;");
+        push(ind + "int LFS = map(ly, 128, 0, 0, 150) * map(rx, 127, 0, 120, 0) / 100;");
+        push(ind + "int LBS = map(ly, 128, 255, 0, 150) * map(rx, 127, 0, 120, 0) / 100;");
+        push(ind + "int RFS = map(ly, 128, 0, 0, 150) * map(rx, 127, 255, 120, 0) / 100;");
+        push(ind + "int RBS = map(ly, 128, 255, 0, 150) * map(rx, 127, 255, 120, 0) / 100;");
+        push(ind + "if (ly == 128 && rx == 127) {");
+        push(ind + "  " + lm.name + "->run(BRAKE);");
+        push(ind + "  " + rm.name + "->run(BRAKE);");
+        push(ind + "} else if (ly == 128 && rx < 127) {");
+        push(ind + "  " + lm.name + "->run(BACKWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(rx, 128, 0, 80, 255));");
+        push(ind + "  " + rm.name + "->run(FORWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(rx, 128, 0, 80, 255));");
+        push(ind + "} else if (ly == 128 && rx > 127) {");
+        push(ind + "  " + lm.name + "->run(FORWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(rx, 128, 255, 80, 255));");
+        push(ind + "  " + rm.name + "->run(BACKWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(rx, 128, 255, 80, 255));");
+        push(ind + "} else if (ly < 128 && rx < 127) {");
+        push(ind + "  " + lm.name + "->run(FORWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(LFS);");
+        push(ind + "  " + rm.name + "->run(FORWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(ly, 128, 0, 40, 255));");
+        push(ind + "} else if (ly < 128 && rx > 127) {");
+        push(ind + "  " + lm.name + "->run(FORWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(ly, 128, 0, 40, 255));");
+        push(ind + "  " + rm.name + "->run(FORWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(RFS);");
+        push(ind + "} else if (ly > 128 && rx < 127) {");
+        push(ind + "  " + lm.name + "->run(BACKWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(LBS);");
+        push(ind + "  " + rm.name + "->run(BACKWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(ly, 128, 255, 40, 255));");
+        push(ind + "} else if (ly > 128 && rx > 127) {");
+        push(ind + "  " + lm.name + "->run(BACKWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(ly, 128, 255, 40, 255));");
+        push(ind + "  " + rm.name + "->run(BACKWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(RBS);");
+        push(ind + "} else if (ly < 128) {");
+        push(ind + "  " + lm.name + "->run(FORWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(ly, 128, 0, 40, 255));");
+        push(ind + "  " + rm.name + "->run(FORWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(ly, 128, 0, 40, 255));");
+        push(ind + "} else if (ly > 128) {");
+        push(ind + "  " + lm.name + "->run(BACKWARD);");
+        push(ind + "  " + lm.name + "->setSpeed(map(ly, 128, 255, 40, 255));");
+        push(ind + "  " + rm.name + "->run(BACKWARD);");
+        push(ind + "  " + rm.name + "->setSpeed(map(ly, 128, 255, 40, 255));");
+        push(ind + "}");
+      };
+
+      if(useModeSwitch && rcOk && tankOk){
+        push("  // ---- 遙控車模式／戰車模式（方向鍵即時切換）----");
+        push("  // 死區：Y=±" + dzY + "（老搖桿靜止時的容錯範圍）, X=±" + dzX);
+        push("  if (tankMode) {");
+        push("    // 戰車模式：" + tankLeftM.name + "=左輪, " + tankRightM.name + "=右輪");
+        emitTankBody(tankLeftM, tankRightM, "    ");
+        push("  } else {");
+        push("    // 遙控車模式：" + rcLeftM.name + "=左輪, " + rcRightM.name + "=右輪");
+        push("    {");
+        emitRcBody(rcLeftM, rcRightM, "    ");
+        push("    }");
+        push("  }");
+        push("");
+      } else if(state.driveMode === "rc" && rcOk){
+        push("  // ---- 遙控車模式：" + rcLeftM.name + "=左輪, " + rcRightM.name + "=右輪 ----");
+        push("  // 死區：Y=±" + dzY + ", X=±" + dzX);
+        push("  {");
+        emitRcBody(rcLeftM, rcRightM, "  ");
+        push("  }");
+        push("");
+      } else if(state.driveMode === "tank" && tankOk){
+        push("  // ---- 戰車模式：" + tankLeftM.name + "=左輪, " + tankRightM.name + "=右輪 ----");
+        push("  // 死區：Y=±" + dzY);
+        push("  {");
+        emitTankBody(tankLeftM, tankRightM, "    ");
+        push("  }");
+        push("");
+      }
+    }
+
+    // ---- servos ----
+    activeServos.forEach(function(s){
+      var btnRules = [];
+      BTN_KEYS.forEach(function(k){
+        var c = state.buttons[k];
+        if(!c || c.type !== "servo") return;
+        (c.targets||[]).forEach(function(t){ if(t.id === s.id) btnRules.push(Object.assign({key:k}, t)); });
+      });
+
+      var axisRule = null;
+      AXIS_KEYS.forEach(function(k){
+        if(axisRule) return;
+        var c = state.axes[k];
+        if(!c || c.type !== "servo") return;
+        var t = (c.targets||[]).filter(function(x){ return x.id === s.id; })[0];
+        if(t) axisRule = Object.assign({key:k}, t);
+      });
+
+      if(btnRules.length === 0 && !axisRule) return;
+
+      push("  // ---- " + s.name + (s.note ? " (" + s.note + ")" : "") + " ----");
+
+      function axisExpr(a){
+        var lo = a.min == null ? 0 : a.min;
+        var hi = a.max == null ? 180 : a.max;
+        var from = a.invert ? hi : lo;
+        var to = a.invert ? lo : hi;
+        return "map(ps2x->Analog(" + a.key + "), 0, 255, " + from + ", " + to + ")";
+      }
+
+      if(btnRules.length === 0 && axisRule){
+        push("  " + s.name + "->writeServo(" + axisExpr(axisRule) + ");");
+      } else {
+        btnRules.forEach(function(r, i){
+          push("  " + (i === 0 ? "if" : "} else if") + " (ps2x->Button(" + r.key + ")) {");
+          push("    " + s.name + "->writeServo(" + (r.angle==null?90:r.angle) + ");");
+        });
+        push("  } else {");
+        if(axisRule){ push("    " + s.name + "->writeServo(" + axisExpr(axisRule) + ");"); }
+        else{ push("    " + s.name + "->writeServo(" + s.name + "_IDLE);"); }
+        push("  }");
+      }
+      push("");
+    });
+
+    push("  delay(50);");
+    push("}");
+
+    if(practiceCfg){
+      L = L.map(function(line){
+        return line.replace(/->setSpeed\(([^;]+)\);/g, function(m, expr){
+          return "->setSpeed(min((int)(" + expr + "), " + practiceCap + "));";
+        });
+      });
+    }
+
+    return L.join("\n");
+  }
+
+  function highlight(code){
+    var esc = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    esc = esc.replace(/(\/\/.*$)/gm, '<span class="c">$1</span>');
+    esc = esc.replace(/\b(void|int|if|else|static|include)\b/g, '<span class="kw">$1</span>');
+    esc = esc.replace(/(&quot;[^&]*?&quot;)/g, '<span class="str">$1</span>');
+    esc = esc.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+    return esc;
+  }
+
+  function renderCode(){
+    var code = genSketch();
+    byId("codeOut").innerHTML = highlight(code);
+    return code;
+  }
+
+  // ---------- toast ----------
+  var toastTimer = null;
+  function toast(msg){
+    var t = byId("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  // ---------- state change pipeline ----------
+  function onStateChanged(rerenderInspector){
+    saveState();
+    renderPad();
+    renderDeviceTables();
+    renderCode();
+    if(rerenderInspector) renderInspector();
+  }
+
+  // ---------- wire pad clicks ----------
+  document.getElementById("pad").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-btn]");
+    var axis = e.target.closest("[data-axis]");
+    if(btn){ selected = {kind:"btn", key: btn.dataset.btn}; }
+    else if(axis){ selected = {kind:"axis", key: axis.dataset.axis}; }
+    else return;
+    renderPad();
+    renderInspector();
+  });
+
+  byId("btnPreset").addEventListener("click", function(){
+    state = defaultState();
+    selected = null;
+    onStateChanged(true);
+    toast("已套用中正創客車預設配置");
+  });
+  byId("btnClear").addEventListener("click", function(){
+    BTN_KEYS.forEach(function(k){ state.buttons[k] = {type:"none"}; });
+    AXIS_KEYS.forEach(function(k){ state.axes[k] = {type:"none"}; });
+    onStateChanged(true);
+    toast("已清空所有按鍵與搖桿設定");
+  });
+
+  byId("btnCopy").addEventListener("click", function(){
+    var code = genSketch();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(function(){
+        toast("程式碼已複製，直接貼到 Arduino IDE 即可");
+      }).catch(function(){
+        toast("複製失敗，請手動選取程式碼區塊");
+      });
+    } else {
+      toast("這個瀏覽器不支援自動複製，請手動選取程式碼區塊");
+    }
+  });
+
+  byId("btnDownload").addEventListener("click", function(){
+    var code = genSketch();
+    (async function(){
+      try{
+        var downloads = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+        if(downloads){
+          await downloads.save({ filename: "PS2Car_generated.ino", data: code });
+          toast("已提供下載，請在跳出的視窗確認儲存");
+          return;
+        }
+      }catch(e){ /* fall through to browser download */ }
+      try{
+        var blob = new Blob([code], {type:"text/plain;charset=utf-8"});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = "PS2Car.ino";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+        toast("已下載 PS2Car.ino，請放進 PS2Car 資料夾（取代原本的同名檔案）");
+        return;
+      }catch(e){ /* fall through to clipboard fallback */ }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code);
+        toast("目前環境無法直接下載檔案，已改為複製到剪貼簿");
+      } else {
+        toast("目前環境無法下載，請手動選取程式碼區塊複製");
+      }
+    })();
+  });
+
+  wireDeviceTables();
+  renderPad();
+  renderDeviceTables();
+  renderInspector();
+  renderCode();
+})();
+</script>
