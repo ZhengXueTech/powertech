@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T-Display 遙控器指南</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1c2430; --ink-soft:#4b5666; --ink-faint:#7a8494;
+    --line:#dfe3ea; --accent:#1f6feb; --accent-ink:#ffffff; --accent-soft:#e7f0ff;
+    --tip-bg:#e9f7ef; --tip-line:#9bd5b3; --warn-bg:#fff4e0; --warn-line:#f0c37a; --bad-bg:#fdecec; --bad-line:#eba4a4;
+    --code-bg:#eef1f5; --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.05);
+    --led-purple:#a24df0; --led-red:#f0413a; --led-green:#22c55e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161c; --card:#1b212a; --ink:#e8ecf2; --ink-soft:#b3bccb; --ink-faint:#8791a1;
+      --line:#2b3340; --accent:#5b9bff; --accent-ink:#0b1220; --accent-soft:#1d2a40;
+      --tip-bg:#16291f; --tip-line:#2f6b4a; --warn-bg:#2d2412; --warn-line:#7a5a1f; --bad-bg:#2e1818; --bad-line:#7a3434;
+      --code-bg:#252c37; --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161c; --card:#1b212a; --ink:#e8ecf2; --ink-soft:#b3bccb; --ink-faint:#8791a1;
+    --line:#2b3340; --accent:#5b9bff; --accent-ink:#0b1220; --accent-soft:#1d2a40;
+    --tip-bg:#16291f; --tip-line:#2f6b4a; --warn-bg:#2d2412; --warn-line:#7a5a1f; --bad-bg:#2e1818; --bad-line:#7a3434;
+    --code-bg:#252c37; --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.8; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:0 16px 56px}
+  a{color:var(--accent)}
+  h1,h2,h3{line-height:1.35; margin:0}
+  p{margin:.6em 0}
+  code,kbd{
+    font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:.9em;
+    background:var(--code-bg); padding:.1em .4em; border-radius:5px; word-break:break-all;
+  }
+  kbd{border:1px solid var(--line); border-bottom-width:2px}
+
+  /* hero */
+  .hero{padding:28px 0 8px}
+  .eyebrow{font-size:.85rem; color:var(--ink-faint); letter-spacing:.04em}
+  .hero h1{font-size:clamp(1.55rem,4.6vw,2.1rem); margin:.2em 0 .35em}
+  .hero p.lead{color:var(--ink-soft); margin:0 0 16px; max-width:40em}
+  .hero-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 20px;
+    border-radius:10px; border:1px solid transparent; font-size:1rem; font-weight:600;
+    text-decoration:none; cursor:pointer; font-family:inherit;
+  }
+  .btn.primary{background:var(--accent); color:var(--accent-ink)}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+  .btn[aria-disabled="true"]{background:var(--code-bg); color:var(--ink-faint); cursor:not-allowed; border-color:var(--line)}
+  .hero .meta{font-size:.85rem; color:var(--ink-faint); margin-top:10px}
+
+  /* nav + progress */
+  .topbar{
+    position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--bg) 92%,transparent);
+    backdrop-filter:blur(6px); border-bottom:1px solid var(--line); margin:14px -16px 18px; padding:8px 16px;
+  }
+  .topbar nav{display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+  .topbar nav::-webkit-scrollbar{display:none}
+  .topbar nav a{
+    flex:0 0 auto; text-decoration:none; color:var(--ink-soft); font-size:.88rem;
+    padding:5px 11px; border-radius:999px; border:1px solid var(--line); background:var(--card); white-space:nowrap;
+  }
+  .topbar nav a:hover{color:var(--accent); border-color:var(--accent)}
+  .progress{display:flex; align-items:center; gap:10px; margin-top:8px; font-size:.82rem; color:var(--ink-faint)}
+  .bar{flex:1; height:6px; background:var(--code-bg); border-radius:99px; overflow:hidden}
+  .bar > i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .3s}
+
+  /* overview strip */
+  .strip{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:0 0 22px; padding:0; list-style:none}
+  .strip li{
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 8px; text-align:center;
+    font-size:.88rem; line-height:1.4; box-shadow:var(--shadow);
+  }
+  .strip b{display:block; font-size:1.15rem; color:var(--accent); margin-bottom:2px}
+
+  /* step cards */
+  section.card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 20px 16px;
+    margin:0 0 18px; box-shadow:var(--shadow);
+  }
+  .step-head{display:flex; align-items:center; gap:12px; margin-bottom:6px}
+  .badge{
+    flex:0 0 auto; width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+    display:grid; place-items:center; font-weight:700;
+  }
+  .step-head h2{font-size:1.25rem; flex:1}
+  .done{display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--ink-soft); cursor:pointer; user-select:none; white-space:nowrap}
+  .done input{width:18px; height:18px; accent-color:var(--accent)}
+  h3{font-size:1.05rem; margin:18px 0 4px}
+  ol.steps,ul.plain{padding-left:1.35em; margin:.5em 0}
+  ol.steps li,ul.plain li{margin:.35em 0}
+
+  .note{border-radius:12px; padding:10px 14px; margin:12px 0; border:1px solid; font-size:.95rem}
+  .note b.t{display:block; margin-bottom:2px}
+  .note.tip{background:var(--tip-bg); border-color:var(--tip-line)}
+  .note.warn{background:var(--warn-bg); border-color:var(--warn-line)}
+  .note.bad{background:var(--bad-bg); border-color:var(--bad-line)}
+  .note p{margin:.3em 0}
+
+  pre.tree{
+    background:var(--code-bg); border-radius:12px; padding:12px 14px; overflow-x:auto; font-size:.88rem; line-height:1.6;
+    font-family:ui-monospace,"Cascadia Mono",Consolas,"Noto Sans TC",monospace; margin:10px 0;
+  }
+
+  table{width:100%; border-collapse:collapse; margin:10px 0; font-size:.93rem}
+  th,td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top}
+  th{background:var(--code-bg); font-weight:600}
+  .tablewrap{overflow-x:auto}
+
+  /* LED demo */
+  .led{display:inline-block; width:14px; height:14px; border-radius:50%; vertical-align:-2px; margin-right:6px}
+  .led.p{background:var(--led-purple); box-shadow:0 0 6px var(--led-purple)}
+  .led.r{background:var(--led-red); box-shadow:0 0 8px var(--led-red)}
+  .led.g{background:var(--led-green); box-shadow:0 0 8px var(--led-green)}
+  .flow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:12px 0}
+  .flow .node{
+    display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; background:var(--code-bg);
+    border:1px solid var(--line); font-size:.92rem; line-height:1.4;
+  }
+  .flow .dot{width:22px; height:22px; border-radius:50%; flex:0 0 auto}
+  .dot.p{background:var(--led-purple); box-shadow:0 0 10px var(--led-purple); opacity:.75}
+  .dot.r{background:var(--led-red); box-shadow:0 0 12px var(--led-red)}
+  .dot.g{background:var(--led-green); box-shadow:0 0 12px var(--led-green)}
+  .flow .arrow{color:var(--ink-faint); font-size:1.1rem}
+  .flow .arrow.both{font-size:1.2rem}
+
+  /* mock UI */
+  .mock{border:1px dashed var(--line); border-radius:12px; padding:12px 14px; margin:10px 0; background:var(--bg); font-size:.92rem}
+  .mock .row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .chip{padding:4px 12px; border-radius:999px; border:1px solid var(--line); background:var(--card); font-size:.88rem}
+  .chip.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+  .fakeslider{display:inline-block; width:130px; height:6px; background:var(--line); border-radius:99px; position:relative; vertical-align:middle; margin:0 8px}
+  .fakeslider::after{content:""; position:absolute; left:34%; top:-5px; width:16px; height:16px; background:var(--accent); border-radius:50%}
+
+  details.faq{border:1px solid var(--line); border-radius:12px; background:var(--card); margin:8px 0; padding:0 16px}
+  details.faq summary{cursor:pointer; padding:12px 0; font-weight:600; list-style:none; display:flex; gap:10px; align-items:flex-start}
+  details.faq summary::-webkit-details-marker{display:none}
+  details.faq summary::before{content:"＋"; color:var(--accent); font-weight:700; flex:0 0 auto}
+  details.faq[open] summary::before{content:"－"}
+  details.faq .a{padding:0 0 12px 24px; color:var(--ink-soft)}
+  details.faq .a p:first-child{margin-top:0}
+
+  footer{margin-top:28px; padding-top:14px; border-top:1px solid var(--line); font-size:.85rem; color:var(--ink-faint); text-align:center}
+
+  @media (max-width:640px){
+    body{font-size:16px}
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .strip li:last-child{grid-column:1 / -1}
+    section.card{padding:16px 14px 12px}
+    .step-head{flex-wrap:wrap}
+    .done{margin-left:46px}
+    .flow .arrow{display:none}
+    .flow .node{width:100%}
+  }
+  @media print{
+    .topbar,.hero-actions .btn.ghost,.done{display:none}
+    details.faq{break-inside:avoid}
+  }
+
+  /* 回 PowerTech 工具箱 */
+  .pt-back{display:inline-flex;align-items:center;gap:4px;margin:10px 0 0 14px;padding:6px 12px;border-radius:999px;
+    font-size:14px;text-decoration:none;color:var(--accent);background:var(--accent-soft);font-family:inherit;position:relative;z-index:5}
+  .pt-back:hover{filter:brightness(1.05)}
+</style>
+</head>
+<body>
+<a class="pt-back" href="../">‹ PowerTech 工具箱</a>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">新北市立中正國民中學 科技中心</div>
+    <h1>T-Display 藍牙遙控器　安裝與使用指南</h1>
+    <p class="lead">把 LILYGO T-Display 做成清道達人的實體遙控器：不靠手機、不怕斷網、按住才動、放開就停。照著六個步驟走，第一次大約 30～40 分鐘。</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="PowerTech_TDisplay.zip" download>⬇ 下載程式（PowerTech_TDisplay.zip）</a>
+      <a class="btn ghost" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">🔧 還沒裝 Arduino IDE？先到這裡下載</a>
+      <a class="btn ghost" href="#s1">從第 1 步開始</a>
+    </div>
+    <div class="meta">適用：<b>LILYGO T-Display（ESP32，V1.1）</b>。T-Display S3 版本開發中。</div>
+  </header>
+
+  <div class="topbar">
+    <nav aria-label="頁面導覽">
+      <a href="#s1">1 下載</a>
+      <a href="#s2">2 安裝軟體</a>
+      <a href="#s3">3 螢幕設定</a>
+      <a href="#s4">4 開發板設定</a>
+      <a href="#s5">5 上傳</a>
+      <a href="#s6">6 連車測試</a>
+      <a href="#hw">接線</a>
+      <a href="#use">操作方式</a>
+      <a href="#faq">常見問題</a>
+    </nav>
+    <div class="progress"><span id="progText">已完成 0 / 6</span><div class="bar"><i id="progBar"></i></div></div>
+  </div>
+
+  <ol class="strip">
+    <li><b>1</b>下載並解壓縮</li>
+    <li><b>2</b>安裝 Arduino IDE 與 ESP32</li>
+    <li><b>3</b>設定螢幕函式庫</li>
+    <li><b>4</b>選開發板與分割</li>
+    <li><b>5</b>上傳程式</li>
+    <li><b>6</b>選車、連線、測試</li>
+  </ol>
+
+  <div class="note warn">
+    <b class="t">⚠ 比賽使用前先確認</b>
+    <p>材料供應商（思頂創客）回覆：可以不用原廠 App、可以用 ESP32 等電子零件自製遙控器，但<b>現成的控制器（掌機、市售手把）不符合自製</b>。競賽規則最終以主辦單位公告為準，正式比賽前請再確認一次。</p>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="card" id="s1" data-step>
+    <div class="step-head">
+      <div class="badge">1</div>
+      <h2>下載並解壓縮程式</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>點上面的「下載程式」，取得 <code>PowerTech_TDisplay.zip</code>。</li>
+      <li>在檔案上按右鍵，選<b>「全部解壓縮」</b>。</li>
+    </ol>
+<pre class="tree">PowerTech_TDisplay/
+└─ PowerTech_TDisplay.ino   ← 用 Arduino IDE 打開這個檔案</pre>
+    <div class="note warn">
+      <b class="t">⚠ 名稱不要改</b>
+      <p>資料夾和 <code>.ino</code> 檔名必須<b>一模一樣、而且是英文</b>，否則 Arduino 會出現「Invalid sketch name」。</p>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="card" id="s2" data-step>
+    <div class="step-head">
+      <div class="badge">2</div>
+      <h2>安裝 Arduino IDE 與 ESP32 開發板</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>到 <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a> 下載 Arduino IDE 2.x，一路按「下一步」安裝。</li>
+      <li>打開 Arduino IDE，選「檔案 → 偏好設定」，在<b>「額外的開發板管理員網址」</b>貼上：<br><code>https://espressif.github.io/arduino-esp32/package_esp32_index.json</code></li>
+      <li>點左側「開發板管理員」圖示，搜尋 <b>esp32</b>，找到 <b>Espressif Systems</b> 那一項。</li>
+      <li><b>版本下拉選單選 2.0.17</b>，再按「安裝」。</li>
+    </ol>
+    <div class="note bad">
+      <b class="t">✖ 不要裝最新的 3.x 版</b>
+      <p>螢幕函式庫 TFT_eSPI 搭配 3.x 常出現編譯錯誤或開機一直重啟。之後 IDE 右下角跳出「有可用更新」也不要按。</p>
+    </div>
+    <h3>可能要裝：USB 驅動程式</h3>
+    <p>用 USB-C 線接上 T-Display 後，如果「工具 → 連接埠」<b>沒有任何 COM 埠</b>，請搜尋安裝「<b>CH9102 driver</b>」或「<b>CH343 driver</b>」（沁恆 WCH 官網），裝完拔掉再插。若還是沒反應，可能是線只能充電不能傳資料，換一條試試。</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="card" id="s3" data-step>
+    <div class="step-head">
+      <div class="badge">3</div>
+      <h2>安裝並設定螢幕函式庫 TFT_eSPI</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>點左側「程式庫管理員」，搜尋 <b>TFT_eSPI</b>（作者 Bodmer），按「安裝」。</li>
+      <li>用檔案總管打開：<code>文件\Arduino\libraries\TFT_eSPI\</code></li>
+      <li>用記事本開啟 <code>User_Setup_Select.h</code>，改兩行：
+        <ul>
+          <li><code>#include &lt;User_Setup.h&gt;</code> 前面加上 <code>//</code></li>
+          <li>找到 <code>//#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;</code>，把前面的 <code>//</code> 刪掉</li>
+        </ul>
+      </li>
+      <li>存檔。</li>
+    </ol>
+<pre class="tree">//#include &lt;User_Setup.h&gt;                          ← 加上 //
+#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;     ← 拿掉 //</pre>
+    <div class="note tip"><b class="t">💡 這步沒做會怎樣？</b><p>程式能上傳，但<b>螢幕全黑</b>。這是最常見的問題。</p></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="card" id="s4" data-step>
+    <div class="step-head">
+      <div class="badge">4</div>
+      <h2>選開發板與分割方式</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <p>打開 <code>PowerTech_TDisplay.ino</code>，在「工具」選單設定：</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>項目</th><th>設定</th></tr></thead>
+      <tbody>
+        <tr><td>開發板</td><td><b>ESP32 Arduino → ESP32 Dev Module</b></td></tr>
+        <tr><td>Partition Scheme</td><td><b>Huge APP (3MB No OTA/1MB SPIFFS)</b></td></tr>
+        <tr><td>連接埠</td><td>插上 T-Display 後出現的 COM 埠</td></tr>
+        <tr><td>其他項目</td><td>維持預設</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn"><b class="t">⚠ Partition Scheme 一定要改</b><p>藍牙加螢幕的程式超過預設的 1.2MB，不改會出現「Sketch too big」。</p></div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="card" id="s5" data-step>
+    <div class="step-head">
+      <div class="badge">5</div>
+      <h2>上傳程式</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>按左上角 <b>✓</b> 編譯，第一次會比較久。</li>
+      <li>編譯成功後按 <b>→</b> 上傳。下方會跑出 <code>Writing at …</code>，最後出現 <code>Hard resetting</code> 就完成了。</li>
+      <li>板子會自動重開，螢幕出現 <b>SCANNING…</b>。</li>
+    </ol>
+    <div class="note tip"><b class="t">💡 卡在 Connecting……？</b><p>按住板子正面<b>左鍵（BOOT）</b>再按上傳，看到 <code>Writing</code> 開始跑就放開。</p></div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="card" id="s6" data-step>
+    <div class="step-head">
+      <div class="badge">6</div>
+      <h2>選車、連線、測試</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <ol class="steps">
+      <li>小車開電，<b>手機原廠 App 斷線</b>（最好直接關掉手機藍牙）。</li>
+      <li>T-Display 開機會掃描 3 秒，列出附近的藍牙裝置，<b>訊號最強的排最上面</b>。</li>
+      <li>左鍵選到自己的車（PT- 開頭），按<b>右鍵</b>連線。</li>
+      <li>螢幕出現綠色 <b>CONNECTED</b>，小車藍牙燈變恆亮，就可以開車了。</li>
+    </ol>
+    <div class="note tip"><b class="t">💡 下次開機</b><p>會自動選好上次連過的車，直接按右鍵就能連。</p></div>
+    <div class="note warn"><b class="t">⚠ 第一次測試</b><p>先把車架高讓輪子懸空，確認前進後退方向正確。方向相反時，把該顆馬達的兩條線對調即可。</p></div>
+  </section>
+
+  <!-- 接線 -->
+  <section class="card" id="hw">
+    <h2>接線：外接按鍵</h2>
+    <p>不接任何按鍵也能用：<b>板上左鍵 = 左輪前進、右鍵 = 右輪前進</b>。要完整控制就外接 8 顆按鍵（12×12 輕觸開關）。</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>功能</th><th>T-Display 腳位</th><th>清道達人</th></tr></thead>
+      <tbody>
+        <tr><td>左輪 前進</td><td><b>G25</b></td><td>M4</td></tr>
+        <tr><td>左輪 後退</td><td><b>G26</b></td><td>M4</td></tr>
+        <tr><td>右輪 前進</td><td><b>G27</b></td><td>M1</td></tr>
+        <tr><td>右輪 後退</td><td><b>G33</b></td><td>M1</td></tr>
+        <tr><td>滾刷 收球</td><td><b>G21</b></td><td>M2</td></tr>
+        <tr><td>滾刷 吐球</td><td><b>G22</b></td><td>M2</td></tr>
+        <tr><td>後門 ＋</td><td><b>G17</b></td><td>M3</td></tr>
+        <tr><td>後門 −</td><td><b>G13</b></td><td>M3</td></tr>
+        <tr><td>所有按鍵的另一腳</td><td><b>GND</b></td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note tip">
+      <b class="t">💡 開關為什麼要接「對角線」？</b>
+      <p>輕觸開關 4 支腳兩兩一組、本來就相通，按下時才把兩組接起來。<b>對角線的兩支腳一定屬於不同組</b>，所以一支接 GPIO、對角另一支接 GND，就一定是「按下才導通」。</p>
+    </div>
+    <div class="note warn"><b class="t">⚠ 不需要電阻</b><p>程式會開啟晶片內建的上拉電阻。按鍵<b>絕對不要接到 3V3 或 5V</b>。</p></div>
+  </section>
+
+  <!-- 操作 -->
+  <section class="card" id="use">
+    <h2>操作方式</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>畫面</th><th>操作</th><th>動作</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">選車</td><td>左鍵 短按</td><td>往下選</td></tr>
+        <tr><td>左鍵 長按 1 秒</td><td>重新掃描</td></tr>
+        <tr><td>右鍵 短按</td><td>連線</td></tr>
+        <tr><td rowspan="3">駕駛</td><td>按住按鍵</td><td>對應馬達轉動，放開就停</td></tr>
+        <tr><td>左右前進一起按</td><td>直走；一前一後 = 原地轉</td></tr>
+        <tr><td>側邊 RST 鍵</td><td>重新開機，回到選車畫面（換車用）</td></tr>
+      </tbody>
+    </table></div>
+    <p>斷線時會每 3 秒自動重連同一台車。</p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="card" id="faq">
+    <h2>常見問題</h2>
+    <details class="faq"><summary>螢幕全黑</summary><div class="a"><p>第 3 步 <code>User_Setup_Select.h</code> 沒改好，或改完沒存檔。改完要重新上傳。</p></div></details>
+    <details class="faq"><summary>出現「Sketch too big」</summary><div class="a"><p>第 4 步 Partition Scheme 沒改成 <b>Huge APP</b>。</p></div></details>
+    <details class="faq"><summary>上傳卡在 Connecting……</summary><div class="a"><p>按住正面左鍵（BOOT）再上傳；或換一條能傳資料的 USB 線。</p></div></details>
+    <details class="faq"><summary>一直 SCANNING，清單裡找不到車</summary><div class="a"><p>小車有開電嗎？手機原廠 App 是不是還連著？小車一次只能被一個裝置連線。長按左鍵 1 秒重新掃描。</p></div></details>
+    <details class="faq"><summary>連上了但車子不動</summary><div class="a"><p>確認按鍵接的是對角腳、另一腳有接 GND。可以打開 Arduino「序列埠監控窗」（115200），按鍵時會顯示送出的位元組，例如 <code>送出 80</code>。</p></div></details>
+    <details class="faq"><summary>編譯錯誤很多、或開機一直重啟</summary><div class="a"><p>ESP32 開發板版本不是 2.0.17。回到第 2 步改版本。</p></div></details>
+  </section>
+
+  <footer class="meta" style="text-align:center;margin-top:28px">
+    © 2026 <a href="https://zhengxuetech.github.io/">ZhengXueTech</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant">CC BY-NC-SA 4.0</a>
+  </footer>
+</div>
+
+<script>
+  (function(){
+    var boxes = Array.prototype.slice.call(document.querySelectorAll("[data-step] .done input"));
+    var text = document.getElementById("progText");
+    var bar = document.getElementById("progBar");
+    function update(){
+      var n = boxes.filter(function(b){ return b.checked; }).length;
+      text.textContent = "已完成 " + n + " / " + boxes.length;
+      bar.style.width = (n / boxes.length * 100) + "%";
+    }
+    boxes.forEach(function(b){ b.addEventListener("change", update); });
+    update();
+  })();
+</script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('../sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>

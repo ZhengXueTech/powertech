@@ -2,7 +2,7 @@
  * 策略：有網路時抓最新版並更新快取；沒網路時用快取 → 斷網也能開
  * 新增工具頁面時，把路徑加進 PRECACHE；大改版時把 VERSION 加 1
  */
-const VERSION = 'pt-v3';
+const VERSION = 'pt-v5';
 const PRECACHE = [
   './',
   './index.html',
@@ -11,6 +11,8 @@ const PRECACHE = [
   './ps2car/',
   './ps2car/index.html',
   './ps2car/configurator.html',
+  './tdisplay/',
+  './tdisplay/index.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',

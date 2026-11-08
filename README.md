@@ -9,6 +9,7 @@
 | 工具 | 資料夾 | 說明 |
 |---|---|---|
 | 清道達人網頁遙控器 | `controller/` | Web Bluetooth 遙控器，取代原廠 App |
+| T-Display 藍牙遙控器 | `tdisplay/` | 自製實體遙控器的安裝教學與程式（`PowerTech_TDisplay.zip`） |
 | PS2 小車配置台與教學 | `ps2car/` | Arduino PS2 手把小車：教學頁、網頁配置台、工具包 zip（`PS2_Car_tool_efun.zip`） |
 
 ## 新增工具
