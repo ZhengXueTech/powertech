@@ -79,6 +79,22 @@
   .sheet .row button { flex: 1; padding: 10px; border-radius: 8px; border: 0; font-size: 15px; font-family: inherit; }
   kbd { background: #2b3038; border: 1px solid #3a404a; border-radius: 4px; padding: 0 5px; font-size: 12px; }
 
+  /* ---------- 比賽模式 ---------- */
+  body.locked #backLink, body.locked #btnSettings, body.locked #btnDisconnect,
+  body.locked #btnLock { display: none !important; }   /* 斷線時「連線」鈕仍會出現，比賽中可直接重連 */
+  #lockBadge { display: none; position: relative; overflow: hidden; margin-left: 4px;
+    background: #3a2a10; color: var(--wheel-on); border: 1px solid #6b4f1a; border-radius: 8px;
+    padding: 8px 12px; font-size: 13px; touch-action: none; cursor: pointer; }
+  body.locked #lockBadge { display: inline-flex; }
+  #lockBar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--wheel-on); }
+  #refull { display: none; position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 20;
+    background: var(--warn); color: #1b0d00; font-weight: 700; padding: 8px 14px; border-radius: 999px; font-size: 14px; }
+  #toast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 20;
+    background: #000d; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 14px;
+    opacity: 0; transition: opacity .2s; pointer-events: none; }
+  #toast.show { opacity: 1; }
+  #btnLock { background: #3a2a10 !important; color: var(--wheel-on) !important; border-color: #6b4f1a !important; }
+
   #unsupported { display: none; padding: 14px; background: #3a1d1f; color: #ffc9cb; font-size: 14px; line-height: 1.6; }
 
   /* 直式手機：改成上下排列，輪子在左右兩側 */
@@ -103,8 +119,12 @@
   <span id="byteView">00 · 00000000</span>
   <button class="primary" id="btnConnect">連線</button>
   <button class="danger" id="btnDisconnect" hidden>斷線</button>
+  <button id="btnLock">🔒 比賽模式</button>
   <button id="btnSettings">設定</button>
+  <div id="lockBadge" title="長按 2 秒解除比賽模式"><span>🔒 長按解鎖</span><i id="lockBar"></i></div>
 </header>
+<div id="refull">比賽模式中：點這裡回到全螢幕</div>
+<div id="toast"></div>
 
 <main>
   <!-- 左輪 M4 -->
@@ -369,6 +389,67 @@ $('btnFull').addEventListener('click', () => {
   (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
   try { screen.orientation?.lock?.('landscape'); } catch (e) {}
 });
+
+
+// ================= 比賽模式（鎖定畫面，避免誤觸離開） =================
+let locked = false;
+const isFull = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+async function enterFull() {
+  const el = document.documentElement;
+  try { await (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el, { navigationUI: 'hide' }); } catch (e) {}
+  try {   // 鎖定目前方向，避免比賽中手機自動旋轉
+    const type = (screen.orientation?.type || '').startsWith('portrait') ? 'portrait' : 'landscape';
+    await screen.orientation?.lock?.(type);
+  } catch (e) {}
+  requestWakeLock();
+  updateRefull();
+}
+function updateRefull() { $('refull').style.display = locked && !isFull() && document.fullscreenEnabled !== false && (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) ? 'block' : 'none'; }
+
+function lockOn() {
+  locked = true;
+  document.body.classList.add('locked');
+  history.pushState({ ptLock: 1 }, '');      // 攔截返回鍵／返回手勢
+  enterFull();
+  toast('比賽模式：長按右上角 🔒 2 秒解除');
+}
+function lockOff() {
+  locked = false;
+  document.body.classList.remove('locked');
+  try { screen.orientation?.unlock?.(); } catch (e) {}
+  if (isFull()) (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+  updateRefull();
+  toast('已解除比賽模式');
+}
+$('btnLock').addEventListener('click', lockOn);
+$('refull').addEventListener('click', enterFull);
+document.addEventListener('fullscreenchange', updateRefull);
+document.addEventListener('webkitfullscreenchange', updateRefull);
+
+// 返回鍵：比賽模式中直接擋下
+window.addEventListener('popstate', () => {
+  if (locked) { history.pushState({ ptLock: 1 }, ''); toast('比賽模式中，長按 🔒 2 秒才能離開'); }
+});
+// 重新整理／關閉分頁：跳出確認視窗
+window.addEventListener('beforeunload', e => { if (locked) { e.preventDefault(); e.returnValue = ''; } });
+// iOS 雙指縮放
+document.addEventListener('gesturestart', e => e.preventDefault());
+
+// 長按 2 秒解鎖
+let holdTimer = null, holdStart = 0, holdRaf = 0;
+function holdTick() {
+  const p = Math.min(1, (performance.now() - holdStart) / 2000);
+  $('lockBar').style.width = (p * 100) + '%';
+  if (p >= 1) { holdEnd(); lockOff(); return; }
+  holdRaf = requestAnimationFrame(holdTick);
+}
+function holdEnd() { cancelAnimationFrame(holdRaf); $('lockBar').style.width = '0'; }
+$('lockBadge').addEventListener('pointerdown', e => { e.preventDefault(); holdStart = performance.now(); holdTick(); });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => $('lockBadge').addEventListener(ev, holdEnd));
 
 if (!navigator.bluetooth) $('unsupported').style.display = 'block';
 render();
