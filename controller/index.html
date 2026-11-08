@@ -77,6 +77,19 @@
   .sheet input[type=text] { flex: 1; background: #111; color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; margin-top: 14px; }
   .sheet .row button { flex: 1; padding: 10px; border-radius: 8px; border: 0; font-size: 15px; font-family: inherit; }
+  .sheet h3 { margin: 18px 0 4px; font-size: 15px; color: var(--wheel); }
+  table.map { width: 100%; border-collapse: collapse; font-size: 15px; }
+  table.map th { text-align: left; color: var(--muted); font-weight: 500; font-size: 13px; padding: 4px; }
+  table.map td { padding: 6px 4px; border-top: 1px solid var(--line); }
+  table.map select { background: #111; color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font-size: 15px; }
+  table.map input { width: 20px; height: 20px; }
+  #mapWarn { color: var(--bad); font-size: 13px; min-height: 4px; margin-top: 6px; }
+  .testGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .tbtn { background: #2b3038; border: 1px solid #3a404a; border-radius: 10px; padding: 12px 4px; text-align: center;
+    font-weight: 700; font-size: 14px; touch-action: none; cursor: pointer; }
+  .tbtn small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
+  .tbtn.on { background: var(--wheel); color: #2a1d00; }
+  .tbtn.on small { color: #2a1d00; }
   kbd { background: #2b3038; border: 1px solid #3a404a; border-radius: 4px; padding: 0 5px; font-size: 12px; }
 
   /* ---------- 比賽模式 ---------- */
@@ -129,7 +142,7 @@
 <main>
   <!-- 左輪 M4 -->
   <section class="col">
-    <div class="colTitle">左輪 M4</div>
+    <div class="colTitle" id="tL">左輪 M4</div>
     <div class="btn wheel" data-act="L_FWD"><span class="big">▲</span><span class="small">前進</span></div>
     <div class="btn wheel" data-act="L_BACK"><span class="big">▼</span><span class="small">後退</span></div>
   </section>
@@ -137,14 +150,14 @@
   <!-- 中間：滾刷 M2、後門 M3 -->
   <section class="col center" id="colCenter">
     <div class="group">
-      <div class="gHead"><span class="colTitle">滾刷 M2</span><span class="toggle" id="brushLatch">常開：關</span></div>
+      <div class="gHead"><span class="colTitle" id="tBRUSH">滾刷 M2</span><span class="toggle" id="brushLatch">常開：關</span></div>
       <div class="pair">
         <div class="btn aux" data-act="BRUSH_IN"><span class="big">⟳</span><span class="small">收球</span></div>
         <div class="btn aux" data-act="BRUSH_OUT"><span class="big">⟲</span><span class="small">吐球</span></div>
       </div>
     </div>
     <div class="group">
-      <div class="colTitle">後門 M3</div>
+      <div class="colTitle" id="tDOOR">後門 M3</div>
       <div class="pair">
         <div class="btn aux" data-act="DOOR_A"><span class="big">＋</span><span class="small">後門 +</span></div>
         <div class="btn aux" data-act="DOOR_B"><span class="big">－</span><span class="small">後門 −</span></div>
@@ -154,7 +167,7 @@
 
   <!-- 右輪 M1 -->
   <section class="col">
-    <div class="colTitle">右輪 M1</div>
+    <div class="colTitle" id="tR">右輪 M1</div>
     <div class="btn wheel" data-act="R_FWD"><span class="big">▲</span><span class="small">前進</span></div>
     <div class="btn wheel" data-act="R_BACK"><span class="big">▼</span><span class="small">後退</span></div>
   </section>
@@ -163,11 +176,24 @@
 <div id="settings">
   <div class="sheet">
     <h2>設定</h2>
-    <p>如果按「前進」車輪卻往後轉，就勾選該馬達的「反向」。設定會記在這台裝置的瀏覽器裡。</p>
-    <label><input type="checkbox" id="invL"> 左輪 M4 反向</label>
-    <label><input type="checkbox" id="invR"> 右輪 M1 反向</label>
-    <label><input type="checkbox" id="invBrush"> 滾刷 M2 反向</label>
-    <label><input type="checkbox" id="invDoor"> 後門 M3 反向</label>
+    <h3>馬達接線</h3>
+    <p>控制板某個孔位壞掉或沒力時，把馬達改插到別的孔，再在這裡選對應的 M 孔。方向相反就勾「反向」。<br>
+       套用對象：<b id="profName">預設</b>（連線後會自動記住每台車各自的設定）</p>
+    <table class="map">
+      <tr><th>功能</th><th>接在</th><th>反向</th></tr>
+      <tr><td>左輪</td><td><select data-f="L"></select></td><td><input type="checkbox" data-inv="L"></td></tr>
+      <tr><td>右輪</td><td><select data-f="R"></select></td><td><input type="checkbox" data-inv="R"></td></tr>
+      <tr><td>滾刷</td><td><select data-f="BRUSH"></select></td><td><input type="checkbox" data-inv="BRUSH"></td></tr>
+      <tr><td>後門</td><td><select data-f="DOOR"></select></td><td><input type="checkbox" data-inv="DOOR"></td></tr>
+    </table>
+    <div id="mapWarn"></div>
+    <div class="row" style="margin-top:8px"><button id="btnReset" style="background:#2b3038;color:var(--text)">恢復預設接線</button></div>
+
+    <h3>馬達測試</h3>
+    <p>連線後按住按鈕，直接測試控制板的每個孔位（不受上面設定影響），用來找出哪個孔正常。</p>
+    <div class="testGrid" id="testGrid"></div>
+
+    <h3>其他</h3>
     <label><input type="checkbox" id="showAll"> 搜尋時顯示所有藍牙裝置（不限 PT- 開頭）</label>
     <label>名稱開頭 <input type="text" id="prefix" value="PT-"></label>
     <p style="margin-top:14px">
@@ -198,25 +224,38 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('pt_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('pt_' + k, JSON.stringify(v)); } catch (e) {} }
 };
-const cfg = {
-  invL: store.get('invL', false), invR: store.get('invR', false),
-  invBrush: store.get('invBrush', false), invDoor: store.get('invDoor', false),
-  showAll: store.get('showAll', false), prefix: store.get('prefix', 'PT-')
-};
+const cfg = { showAll: store.get('showAll', false), prefix: store.get('prefix', 'PT-') };
 
-// 每個動作對應的位元（反向設定會對調）
+// ---- 控制板孔位：每個 M 孔有「正轉」「反轉」兩個位元 ----
+const PORT = {
+  M1: { f: 0x02, b: 0x01, key: '˄ / ˅' },
+  M2: { f: 0x04, b: 0x08, key: '‹ / ›' },
+  M3: { f: 0x20, b: 0x10, key: '+ / −' },
+  M4: { f: 0x80, b: 0x40, key: 'B / A' }
+};
+const FUNC_NAME = { L: '左輪', R: '右輪', BRUSH: '滾刷', DOOR: '後門' };
+const DEFAULT_MAP = { port: { L: 'M4', R: 'M1', BRUSH: 'M2', DOOR: 'M3' },
+                      inv:  { L: false, R: false, BRUSH: false, DOOR: false } };
+// 每個按鈕動作 → [功能, 方向]
+const ACT = { L_FWD: ['L', 'f'], L_BACK: ['L', 'b'], R_FWD: ['R', 'f'], R_BACK: ['R', 'b'],
+              BRUSH_IN: ['BRUSH', 'f'], BRUSH_OUT: ['BRUSH', 'b'], DOOR_A: ['DOOR', 'f'], DOOR_B: ['DOOR', 'b'] };
+
+// 接線設定依車名分開記錄（每台車的控制板狀況不同）
+let profKey = 'default';
+let map = loadMap(profKey);
+function loadMap(key) {
+  const m = store.get('map_' + key, null) || store.get('map_default', null) || DEFAULT_MAP;
+  return JSON.parse(JSON.stringify({ port: { ...DEFAULT_MAP.port, ...m.port }, inv: { ...DEFAULT_MAP.inv, ...m.inv } }));
+}
+function saveMap() { store.set('map_' + profKey, map); }
+function useProfile(name) { profKey = name || 'default'; map = loadMap(profKey); fillSettings(); render(); }
+
 function bitFor(act) {
-  switch (act) {
-    case 'L_FWD':     return cfg.invL ? BIT.A : BIT.B;
-    case 'L_BACK':    return cfg.invL ? BIT.B : BIT.A;
-    case 'R_FWD':     return cfg.invR ? BIT.V : BIT.UP;
-    case 'R_BACK':    return cfg.invR ? BIT.UP : BIT.V;
-    case 'BRUSH_IN':  return cfg.invBrush ? BIT.GT : BIT.LT;
-    case 'BRUSH_OUT': return cfg.invBrush ? BIT.LT : BIT.GT;
-    case 'DOOR_A':    return cfg.invDoor ? BIT.MINUS : BIT.PLUS;
-    case 'DOOR_B':    return cfg.invDoor ? BIT.PLUS : BIT.MINUS;
-  }
-  return 0;
+  const [fn, dir] = ACT[act] || [];
+  if (!fn) return 0;
+  const p = PORT[map.port[fn]];
+  const d = map.inv[fn] ? (dir === 'f' ? 'b' : 'f') : dir;
+  return p[d];
 }
 // 同一顆馬達的兩個方向同時按 → 都不送（避免衝突）
 const PAIRS = [['L_FWD', 'L_BACK'], ['R_FWD', 'R_BACK'], ['BRUSH_IN', 'BRUSH_OUT'], ['DOOR_A', 'DOOR_B']];
@@ -233,8 +272,9 @@ function currentActs() {
   for (const [a, b] of PAIRS) if (s.has(a) && s.has(b)) { s.delete(a); s.delete(b); }
   return s;
 }
+let testBits = 0;   // 設定頁「馬達測試」用
 function currentByte() {
-  let m = 0;
+  let m = testBits;
   for (const a of currentActs()) m |= bitFor(a);
   return m;
 }
@@ -310,7 +350,7 @@ function pollGamepad() {
 requestAnimationFrame(pollGamepad);
 
 // ---- 離開頁面或切到背景時全部放開（安全）----
-function releaseAll() { touchActs.clear(); keyActs.clear(); padActs.clear(); render(); sendNow(); }
+function releaseAll() { touchActs.clear(); keyActs.clear(); padActs.clear(); testBits = 0; document.querySelectorAll('.tbtn.on').forEach(e => e.classList.remove('on')); render(); sendNow(); }
 window.addEventListener('blur', releaseAll);
 document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
 
@@ -353,6 +393,7 @@ async function connect() {
     const svc = await server.getPrimaryService(0xFFE0);
     chr = await svc.getCharacteristic(0xFFE1);
     setStatus('on', device.name || '已連線');
+    useProfile(device.name);
     requestWakeLock();
     sendNow();
   } catch (e) {
@@ -376,10 +417,51 @@ async function requestWakeLock() { try { wakeLock = await navigator.wakeLock?.re
 document.addEventListener('visibilitychange', () => { if (!document.hidden && chr) requestWakeLock(); });
 
 // ---- 設定面板 ----
-for (const k of ['invL', 'invR', 'invBrush', 'invDoor', 'showAll']) {
-  $(k).checked = cfg[k];
-  $(k).addEventListener('change', () => { cfg[k] = $(k).checked; store.set(k, cfg[k]); render(); });
+$('showAll').checked = cfg.showAll;
+$('showAll').addEventListener('change', () => { cfg.showAll = $('showAll').checked; store.set('showAll', cfg.showAll); });
+
+// 接線設定表
+for (const sel of document.querySelectorAll('select[data-f]')) {
+  for (const p of Object.keys(PORT)) sel.add(new Option(`${p}（${PORT[p].key}）`, p));
+  sel.addEventListener('change', () => { map.port[sel.dataset.f] = sel.value; saveMap(); fillSettings(); render(); });
 }
+for (const cb of document.querySelectorAll('input[data-inv]')) {
+  cb.addEventListener('change', () => { map.inv[cb.dataset.inv] = cb.checked; saveMap(); render(); });
+}
+$('btnReset').addEventListener('click', () => { map = JSON.parse(JSON.stringify(DEFAULT_MAP)); saveMap(); fillSettings(); render(); });
+function fillSettings() {
+  $('profName').textContent = profKey === 'default' ? '預設（未連線）' : profKey;
+  for (const sel of document.querySelectorAll('select[data-f]')) sel.value = map.port[sel.dataset.f];
+  for (const cb of document.querySelectorAll('input[data-inv]')) cb.checked = map.inv[cb.dataset.inv];
+  // 檢查重複孔位
+  const used = {};
+  for (const fn in map.port) (used[map.port[fn]] = used[map.port[fn]] || []).push(FUNC_NAME[fn]);
+  const dup = Object.entries(used).filter(([, v]) => v.length > 1).map(([p, v]) => `${p} 同時設給了 ${v.join('、')}`);
+  $('mapWarn').textContent = dup.length ? '⚠ ' + dup.join('；') : '';
+  // 主畫面標題跟著更新
+  $('tL').textContent = '左輪 ' + map.port.L;
+  $('tR').textContent = '右輪 ' + map.port.R;
+  $('tBRUSH').textContent = '滾刷 ' + map.port.BRUSH;
+  $('tDOOR').textContent = '後門 ' + map.port.DOOR;
+}
+
+// 馬達測試按鈕（按住才送）
+for (const p of Object.keys(PORT)) {
+  for (const d of ['f', 'b']) {
+    const el = document.createElement('div');
+    el.className = 'tbtn';
+    el.innerHTML = `${p} ${d === 'f' ? '正轉' : '反轉'}<small>${(PORT[p][d]).toString(16).padStart(2, '0').toUpperCase()}</small>`;
+    const on = e => { e.preventDefault(); el.setPointerCapture?.(e.pointerId); testBits |= PORT[p][d]; el.classList.add('on'); render(); sendNow(); };
+    const off = () => { testBits &= ~PORT[p][d]; el.classList.remove('on'); render(); sendNow(); };
+    el.addEventListener('pointerdown', on);
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => el.addEventListener(ev, off));
+    $('testGrid').appendChild(el);
+  }
+}
+// 測試按鈕排成：上排正轉、下排反轉
+(() => { const g = $('testGrid'); const items = [...g.children];
+  items.filter((_, i) => i % 2 === 0).concat(items.filter((_, i) => i % 2 === 1)).forEach(el => g.appendChild(el)); })();
+fillSettings();
 $('prefix').value = cfg.prefix;
 $('prefix').addEventListener('input', () => { cfg.prefix = $('prefix').value.trim(); store.set('prefix', cfg.prefix); });
 $('btnSettings').addEventListener('click', () => { releaseAll(); $('settings').classList.add('show'); });
