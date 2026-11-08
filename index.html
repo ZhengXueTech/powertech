@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#14161a">
 <meta name="description" content="PowerTech 清道達人教學與競賽工具：網頁藍牙遙控器等。">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>PowerTech 工具箱</title>
 <style>
   :root {
@@ -53,7 +58,8 @@
     <b>使用藍牙工具前：</b><br>
     ・請用 <b>Android 手機或電腦的 Chrome／Edge</b> 開啟；iPhone／iPad 請安裝免費的 <b>Bluefy</b> 瀏覽器。<br>
     ・小車一次只能連一個裝置，請先<b>關閉原廠 App 的連線</b>。<br>
-    ・若從 Google 協作平台點進來，請在<b>新分頁</b>開啟，嵌入框架內無法使用藍牙。
+    ・若從 Google 協作平台點進來，請在<b>新分頁</b>開啟，嵌入框架內無法使用藍牙。<br>
+    ・<b>離線使用：</b>有網路時用 Chrome 開一次，點右上角 ⋮ →「<b>安裝應用程式</b>」或「<b>加到主畫面</b>」，之後斷網也能從主畫面開啟。
   </div>
 
   <footer>
@@ -95,6 +101,12 @@ for (const t of TOOLS) {
     <p>${t.desc}</p>
     <div class="tags">${t.tags.map(g => `<span class="tag${g === 'NEW' ? ' new' : ''}">${g}</span>`).join('')}</div>`;
   grid.appendChild(el);
+}
+</script>
+<script>
+// 離線功能：註冊 Service Worker（只在 https 網址有效）
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW 註冊失敗', e));
 }
 </script>
 </body>
