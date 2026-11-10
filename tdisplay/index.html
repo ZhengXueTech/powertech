@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T-Display 遙控器指南</title>
+<title>萬用遙控器安裝指南</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" href="../icons/icon-192.png">
 <style>
@@ -79,7 +79,7 @@
   .bar > i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .3s}
 
   /* overview strip */
-  .strip{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:0 0 22px; padding:0; list-style:none}
+  .strip{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 22px; padding:0; list-style:none}
   .strip li{
     background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 8px; text-align:center;
     font-size:.88rem; line-height:1.4; box-shadow:var(--shadow);
@@ -158,7 +158,6 @@
   @media (max-width:640px){
     body{font-size:16px}
     .strip{grid-template-columns:repeat(2,1fr)}
-    .strip li:last-child{grid-column:1 / -1}
     section.card{padding:16px 14px 12px}
     .step-head{flex-wrap:wrap}
     .done{margin-left:46px}
@@ -183,14 +182,14 @@
 
   <header class="hero">
     <div class="eyebrow">新北市立中正國民中學 科技中心</div>
-    <h1>T-Display 藍牙遙控器　安裝與使用指南</h1>
-    <p class="lead">把 LILYGO T-Display 做成清道達人的實體遙控器：不靠手機、不怕斷網、按住才動、放開就停。照著六個步驟走，第一次大約 30～40 分鐘。</p>
+    <h1>萬用遙控器（T-Display）　安裝與使用指南</h1>
+    <p class="lead">把 LILYGO T-Display 做成清道達人的自製遙控器：螢幕選車、按住才動、設定存在板子裡；開 Wi-Fi 熱點後，<b>iPhone、iPad、Android 都能用瀏覽器控制</b>，不用裝 App、不需要網路。第一次照著做大約 40 分鐘。</p>
     <div class="hero-actions">
-      <a class="btn primary" href="PowerTech_TDisplay.zip" download>⬇ 下載程式（PowerTech_TDisplay.zip）</a>
+      <a class="btn primary" href="UniRemote_v0.2.zip" download>⬇ 下載程式（UniRemote v0.2）</a>
       <a class="btn ghost" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">🔧 還沒裝 Arduino IDE？先到這裡下載</a>
       <a class="btn ghost" href="#s1">從第 1 步開始</a>
     </div>
-    <div class="meta">適用：<b>LILYGO T-Display（ESP32，V1.1）</b>。T-Display S3 版本開發中。</div>
+    <div class="meta">已實測：<b>LILYGO T-Display V1.1（ESP32）</b>。同一份程式也支援 T-Display S3（實機測試中）。</div>
   </header>
 
   <div class="topbar">
@@ -200,12 +199,14 @@
       <a href="#s3">3 螢幕設定</a>
       <a href="#s4">4 開發板設定</a>
       <a href="#s5">5 上傳</a>
-      <a href="#s6">6 連車測試</a>
-      <a href="#hw">接線</a>
-      <a href="#use">操作方式</a>
+      <a href="#s6">6 連車</a>
+      <a href="#s7">7 檢查方向</a>
+      <a href="#s8">8 手機控制</a>
+      <a href="#keys">按鍵操作</a>
+      <a href="#hw">外接按鍵</a>
       <a href="#faq">常見問題</a>
     </nav>
-    <div class="progress"><span id="progText">已完成 0 / 6</span><div class="bar"><i id="progBar"></i></div></div>
+    <div class="progress"><span id="progText">已完成 0 / 8</span><div class="bar"><i id="progBar"></i></div></div>
   </div>
 
   <ol class="strip">
@@ -214,7 +215,9 @@
     <li><b>3</b>設定螢幕函式庫</li>
     <li><b>4</b>選開發板與分割</li>
     <li><b>5</b>上傳程式</li>
-    <li><b>6</b>選車、連線、測試</li>
+    <li><b>6</b>選車、連線</li>
+    <li><b>7</b>檢查馬達方向</li>
+    <li><b>8</b>手機／平板控制</li>
   </ol>
 
   <div class="note warn">
@@ -230,14 +233,22 @@
       <label class="done"><input type="checkbox"> 我完成了</label>
     </div>
     <ol class="steps">
-      <li>點上面的「下載程式」，取得 <code>PowerTech_TDisplay.zip</code>。</li>
+      <li>點上面的「下載程式」，取得 <code>UniRemote_v0.2.zip</code>。</li>
       <li>在檔案上按右鍵，選<b>「全部解壓縮」</b>。</li>
     </ol>
-<pre class="tree">PowerTech_TDisplay/
-└─ PowerTech_TDisplay.ino   ← 用 Arduino IDE 打開這個檔案</pre>
+<pre class="tree">UniRemote_v0.2/
+├─ UniRemote/
+│  ├─ UniRemote.ino   ← 用 Arduino IDE 打開這個檔案
+│  ├─ types.h
+│  ├─ assets.h        （中文字型）
+│  ├─ web.h           （手機控制頁）
+│  ├─ qrcodegen.c
+│  └─ qrcodegen.h
+├─ tools/             （改中文字時才用得到）
+└─ 使用說明.txt</pre>
     <div class="note warn">
-      <b class="t">⚠ 名稱不要改</b>
-      <p>資料夾和 <code>.ino</code> 檔名必須<b>一模一樣、而且是英文</b>，否則 Arduino 會出現「Invalid sketch name」。</p>
+      <b class="t">⚠ 6 個檔案要放在一起</b>
+      <p><code>UniRemote</code> 資料夾裡的檔案都要在，資料夾名稱和 <code>.ino</code> 檔名也不要改。打開後 Arduino IDE 上方會出現好幾個分頁，這是正常的。</p>
     </div>
   </section>
 
@@ -258,6 +269,7 @@
       <b class="t">✖ 不要裝最新的 3.x 版</b>
       <p>螢幕函式庫 TFT_eSPI 搭配 3.x 常出現編譯錯誤或開機一直重啟。之後 IDE 右下角跳出「有可用更新」也不要按。</p>
     </div>
+    <p>藍牙、Wi-Fi、網頁伺服器都是 ESP32 內建的，<b>不用另外安裝其他函式庫</b>（螢幕函式庫在下一步）。</p>
     <h3>可能要裝：USB 驅動程式</h3>
     <p>用 USB-C 線接上 T-Display 後，如果「工具 → 連接埠」<b>沒有任何 COM 埠</b>，請搜尋安裝「<b>CH9102 driver</b>」或「<b>CH343 driver</b>」（沁恆 WCH 官網），裝完拔掉再插。若還是沒反應，可能是線只能充電不能傳資料，換一條試試。</p>
   </section>
@@ -272,17 +284,18 @@
     <ol class="steps">
       <li>點左側「程式庫管理員」，搜尋 <b>TFT_eSPI</b>（作者 Bodmer），按「安裝」。</li>
       <li>用檔案總管打開：<code>文件\Arduino\libraries\TFT_eSPI\</code></li>
-      <li>用記事本開啟 <code>User_Setup_Select.h</code>，改兩行：
-        <ul>
-          <li><code>#include &lt;User_Setup.h&gt;</code> 前面加上 <code>//</code></li>
-          <li>找到 <code>//#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;</code>，把前面的 <code>//</code> 刪掉</li>
-        </ul>
-      </li>
-      <li>存檔。</li>
+      <li>在 <code>User_Setup_Select.h</code> 上按右鍵 →「開啟檔案」→ 選<b>記事本</b>。</li>
+      <li>按 <kbd>Ctrl</kbd>+<kbd>F</kbd> 搜尋，依你的板子改成下面這樣（前面有 <code>//</code> 代表不使用），存檔。</li>
     </ol>
-<pre class="tree">//#include &lt;User_Setup.h&gt;                          ← 加上 //
-#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;     ← 拿掉 //</pre>
-    <div class="note tip"><b class="t">💡 這步沒做會怎樣？</b><p>程式能上傳，但<b>螢幕全黑</b>。這是最常見的問題。</p></div>
+    <h3>T-Display V1.1（ESP32，小螢幕 1.14 吋）</h3>
+<pre class="tree">//#include &lt;User_Setup.h&gt;                                 ← 前面加 //
+#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;            ← 前面的 // 刪掉
+//#include &lt;User_Setups/Setup206_LilyGo_T_Display_S3.h&gt;   ← 保持有 //</pre>
+    <h3>T-Display S3（大螢幕 1.9 吋）</h3>
+<pre class="tree">//#include &lt;User_Setup.h&gt;
+//#include &lt;User_Setups/Setup25_TTGO_T_Display.h&gt;          ← 加回 //
+#include &lt;User_Setups/Setup206_LilyGo_T_Display_S3.h&gt;     ← 前面的 // 刪掉</pre>
+    <div class="note tip"><b class="t">💡 原則</b><p>整個檔案裡，開頭是 <code>#include &lt;User_Setup</code> 而且前面<b>沒有</b> <code>//</code> 的，只能有一行。這步沒做好，程式能上傳但<b>螢幕全黑</b>。</p></div>
   </section>
 
   <!-- STEP 4 -->
@@ -292,17 +305,19 @@
       <h2>選開發板與分割方式</h2>
       <label class="done"><input type="checkbox"> 我完成了</label>
     </div>
-    <p>打開 <code>PowerTech_TDisplay.ino</code>，在「工具」選單設定：</p>
+    <p>打開 <code>UniRemote.ino</code>，在「工具」選單設定：</p>
     <div class="tablewrap"><table>
-      <thead><tr><th>項目</th><th>設定</th></tr></thead>
+      <thead><tr><th>項目</th><th>T-Display V1.1</th><th>T-Display S3</th></tr></thead>
       <tbody>
-        <tr><td>開發板</td><td><b>ESP32 Arduino → ESP32 Dev Module</b></td></tr>
-        <tr><td>Partition Scheme</td><td><b>Huge APP (3MB No OTA/1MB SPIFFS)</b></td></tr>
-        <tr><td>連接埠</td><td>插上 T-Display 後出現的 COM 埠</td></tr>
-        <tr><td>其他項目</td><td>維持預設</td></tr>
+        <tr><td>開發板</td><td><b>ESP32 Dev Module</b></td><td><b>ESP32S3 Dev Module</b></td></tr>
+        <tr><td>Partition Scheme</td><td colspan="2"><b>Huge APP (3MB No OTA/1MB SPIFFS)</b></td></tr>
+        <tr><td>USB CDC On Boot</td><td>（沒有這項）</td><td><b>Enabled</b></td></tr>
+        <tr><td>Flash Size</td><td>預設</td><td><b>16MB (128Mb)</b></td></tr>
+        <tr><td>PSRAM</td><td>（沒有這項）</td><td><b>OPI PSRAM</b></td></tr>
+        <tr><td>連接埠</td><td colspan="2">插上板子後出現的 COM 埠</td></tr>
       </tbody>
     </table></div>
-    <div class="note warn"><b class="t">⚠ Partition Scheme 一定要改</b><p>藍牙加螢幕的程式超過預設的 1.2MB，不改會出現「Sketch too big」。</p></div>
+    <div class="note warn"><b class="t">⚠ Partition Scheme 一定要改，而且換開發板會被重設</b><p>程式含藍牙、Wi-Fi 和中文字型，約 2MB，超過預設的 1.25MB，不改會出現「Sketch 太胖了」。每次切換開發板之後都要再檢查一次。</p></div>
   </section>
 
   <!-- STEP 5 -->
@@ -313,85 +328,175 @@
       <label class="done"><input type="checkbox"> 我完成了</label>
     </div>
     <ol class="steps">
-      <li>按左上角 <b>✓</b> 編譯，第一次會比較久。</li>
-      <li>編譯成功後按 <b>→</b> 上傳。下方會跑出 <code>Writing at …</code>，最後出現 <code>Hard resetting</code> 就完成了。</li>
-      <li>板子會自動重開，螢幕出現 <b>SCANNING…</b>。</li>
+      <li>按左上角 <b>→</b> 上傳。第一次編譯比較久（1～3 分鐘）。</li>
+      <li>下方跑出 <code>Writing at …</code>，最後出現 <code>Hard resetting</code> 就完成了。</li>
+      <li>板子自動重開，螢幕出現「學思創客 萬用遙控器」，接著進入駕駛畫面。</li>
     </ol>
-    <div class="note tip"><b class="t">💡 卡在 Connecting……？</b><p>按住板子正面<b>左鍵（BOOT）</b>再按上傳，看到 <code>Writing</code> 開始跑就放開。</p></div>
+    <div class="note tip"><b class="t">💡 卡在 Connecting……？</b><p>按住板子的 <b>BOOT 鍵</b>，按一下 <b>RST</b> 再放開 BOOT，然後重新上傳。上傳完按一下 RST，程式就會開始跑。</p></div>
+    <div class="note tip"><b class="t">💡 出現「找到了多個 BLEDevice.h 程式庫」</b><p>這只是提醒，不是錯誤。它會用 ESP32 內建的藍牙，這就是對的。</p></div>
   </section>
 
   <!-- STEP 6 -->
   <section class="card" id="s6" data-step>
     <div class="step-head">
       <div class="badge">6</div>
-      <h2>選車、連線、測試</h2>
+      <h2>第一次選車、連線</h2>
       <label class="done"><input type="checkbox"> 我完成了</label>
     </div>
+    <p>沒有接任何外部按鍵也能完成，只用板子上的兩顆鍵（左鍵、右鍵）。</p>
     <ol class="steps">
-      <li>小車開電，<b>手機原廠 App 斷線</b>（最好直接關掉手機藍牙）。</li>
-      <li>T-Display 開機會掃描 3 秒，列出附近的藍牙裝置，<b>訊號最強的排最上面</b>。</li>
-      <li>左鍵選到自己的車（PT- 開頭），按<b>右鍵</b>連線。</li>
-      <li>螢幕出現綠色 <b>CONNECTED</b>，小車藍牙燈變恆亮，就可以開車了。</li>
+      <li>小車開電，<b>手機原廠 App 要先斷線</b>（小車一次只能連一個裝置）。</li>
+      <li>在駕駛畫面<b>長按右鍵 1 秒</b>，下方跑完進度條就會進入「設定選單」。</li>
+      <li>選「連線」→ 右鍵短按 →「選擇小車」→ 右鍵短按，掃描約 3 秒。</li>
+      <li>清單依訊號強弱排序，最上面通常就是最近的車。左鍵移到你的車，右鍵短按連線。</li>
+      <li>連上後回到駕駛畫面，標題列右邊出現車名。</li>
     </ol>
-    <div class="note tip"><b class="t">💡 下次開機</b><p>會自動選好上次連過的車，直接按右鍵就能連。</p></div>
-    <div class="note warn"><b class="t">⚠ 第一次測試</b><p>先把車架高讓輪子懸空，確認前進後退方向正確。方向相反時，把該顆馬達的兩條線對調即可。</p></div>
+    <div class="note tip"><b class="t">💡 之後開機</b><p>會自動連上次那台車；斷線會自動重連 3 次。還是連不上時，在駕駛畫面短按右鍵再試一次。</p></div>
+  </section>
+
+  <!-- STEP 7 -->
+  <section class="card" id="s7" data-step>
+    <div class="step-head">
+      <div class="badge">7</div>
+      <h2>檢查馬達與方向</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <h3>① 單顆馬達測試：確認每顆都會轉</h3>
+    <ol class="steps">
+      <li>選單 →「馬達設定」→ 往下到「單顆馬達測試」→ 右鍵短按。</li>
+      <li><b>按住右鍵</b>：選中的馬達轉，放開就停。<b>左鍵短按</b>換下一顆，<b>左鍵長按</b>離開。</li>
+      <li>M1～M4 逐顆測，記下每顆是哪個輪子或機構。</li>
+    </ol>
+    <p>這個畫面只看「會不會轉」，不套用反轉設定，所以<b>方向要在駕駛畫面檢查</b>。</p>
+    <h3>② 駕駛畫面：確認方向</h3>
+    <p>先把車架高，讓輪子懸空。用一條杜邦線，一端插 <b>GND</b>，另一端去碰下面的腳位（碰到就等於按下那顆鍵）：</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>碰這支腳（V1.1）</th><th>應該看到</th><th>不對的話</th></tr></thead>
+      <tbody>
+        <tr><td><b>G25</b> 左輪▲</td><td>左輪往<b>車頭方向</b>滾</td><td>選單 → 馬達設定 →「左輪反轉」改成開</td></tr>
+        <tr><td><b>G27</b> 右輪▲</td><td>右輪往<b>車頭方向</b>滾</td><td>「右輪反轉」改成開</td></tr>
+        <tr><td><b>G21</b> 滾刷收</td><td>滾刷把球<b>往車內</b>捲</td><td>「滾刷反轉」改成開</td></tr>
+        <tr><td><b>G17</b> 後門＋</td><td>後門<b>打開</b></td><td>「後門反轉」改成開</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note tip"><b class="t">💡 動到別的馬達？</b><p>表示接到別的埠，到「左輪 接 M?」這類項目，右鍵短按就會換成下一個埠。被搶走的功能會自動換到空出來的埠，不會重複。設定會存在板子裡，拔電也不會忘。</p></div>
+    <p>最後放回地上，同時碰 G25 和 G27，車子應該直線前進。</p>
+  </section>
+
+  <!-- STEP 8 -->
+  <section class="card" id="s8" data-step>
+    <div class="step-head">
+      <div class="badge">8</div>
+      <h2>用手機或平板控制</h2>
+      <label class="done"><input type="checkbox"> 我完成了</label>
+    </div>
+    <p>遙控器開機後會自己開一個 Wi-Fi 熱點。手機連上這個 Wi-Fi，用瀏覽器打開控制頁，遙控器再用藍牙轉給小車。<b>不需要網路、不用裝 App</b>。</p>
+    <div class="flow">
+      <div class="node">📱 手機／平板<br>瀏覽器</div><div class="arrow">→ Wi-Fi →</div>
+      <div class="node">📟 萬用遙控器<br>PowerTech-XXXX</div><div class="arrow">→ 藍牙 →</div>
+      <div class="node">🚗 清道達人</div>
+    </div>
+    <ol class="steps">
+      <li>駕駛畫面最下面會顯示「<b>手機配對碼 1234</b>」（每次開機都不一樣）。</li>
+      <li>選單 →「手機連線」→「顯示 QR Code」。
+        <ul>
+          <li>第 1 頁：用手機相機掃描 → 加入 Wi-Fi（<code>PowerTech-XXXX</code>，密碼 <code>ccjhsmaker</code>）</li>
+          <li>第 2 頁（左鍵切換）：掃描 → 打開控制頁。也可以在瀏覽器輸入 <code>192.168.4.1</code></li>
+        </ul>
+      </li>
+      <li>在控制頁輸入配對碼 → 按「開始控制」。</li>
+      <li>手機<b>橫放</b>：左手按左輪、右手按右輪，中間是收球、吐球、滾刷常開、後門。可以多指同時按。</li>
+    </ol>
+    <div class="note warn"><b class="t">⚠ 手機說「此 Wi-Fi 沒有網際網路」</b><p>選<b>「保持連線」</b>。如果控制頁一直打不開，先把行動數據關掉再試。</p></div>
+    <h3>安全設計</h3>
+    <ul class="plain">
+      <li><b>一次只有一支手機能控制</b>，其他人輸入配對碼會被拒絕。</li>
+      <li>要換人：選單 →「手機連線」→「<b>換碼踢掉手機</b>」，舊手機立刻失去控制，用新配對碼重新連。</li>
+      <li>手機訊號斷掉、切到別的 App、關螢幕：<b>0.4 秒內小車自動停</b>。</li>
+      <li>遙控器在選單裡時，小車一律停；手機頁會顯示提示。</li>
+      <li>手機<b>只能開車，不能改馬達設定</b>。方向和埠的設定一律在遙控器上改，手機自動照著走。</li>
+    </ul>
+    <div class="tablewrap"><table>
+      <thead><tr><th>操作來源（選單 → 手機連線）</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><b>混合</b>（預設）</td><td>實體鍵和手機都可以開車</td></tr>
+        <tr><td><b>實體鍵</b></td><td>手機不能控制（比賽只用實體遙控器時）</td></tr>
+        <tr><td><b>手機</b></td><td>只有手機能開車；遙控器只當轉接盒</td></tr>
+      </tbody>
+    </table></div>
+    <p>不需要手機時，可以在「手機連線 → Wi-Fi 熱點」關掉，比較省電。Wi-Fi 密碼可以在程式最上面的 <code>AP_PASS</code> 修改（至少 8 碼、建議全小寫）。</p>
+  </section>
+
+  <!-- 按鍵操作 -->
+  <section class="card" id="keys">
+    <h2>按鍵操作一覽</h2>
+    <h3>板子上的兩顆鍵（不用接任何東西）</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>畫面</th><th>左鍵（BOOT）</th><th>右鍵</th></tr></thead>
+      <tbody>
+        <tr><td>駕駛畫面</td><td>—</td><td><b>長按 1 秒進選單</b>；未連線時短按＝重新連線</td></tr>
+        <tr><td>選單</td><td>下一項</td><td>短按＝確定；長按＝返回</td></tr>
+        <tr><td>單顆馬達測試</td><td>短按換下一顆；長按離開</td><td>按住＝正轉</td></tr>
+        <tr><td>按鍵測試</td><td colspan="2">按下的鍵會亮；長按右鍵 2 秒離開</td></tr>
+      </tbody>
+    </table></div>
+    <h3>外接按鍵（接上之後）</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>畫面</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>駕駛畫面</td><td>左▲▼ 左輪、右▲▼ 右輪、收／吐 滾刷、門＋／門− 後門；常開鍵＝滾刷持續收球；<b>選單鍵長按 1 秒</b>＝進選單</td></tr>
+        <tr><td>選單</td><td>左▲▼ 移動、右▲ 確定、右▼ 返回、選單鍵短按＝回駕駛畫面</td></tr>
+      </tbody>
+    </table></div>
+    <h3>比賽鎖定</h3>
+    <p>選單 →「螢幕與比賽」→「比賽鎖定」開。鎖定後選單鍵沒有反應，比賽中不會誤觸。<b>解鎖：兩顆板載鍵一起長按 3 秒</b>。</p>
   </section>
 
   <!-- 接線 -->
   <section class="card" id="hw">
-    <h2>接線：外接按鍵</h2>
-    <p>不接任何按鍵也能用：<b>板上左鍵 = 左輪前進、右鍵 = 右輪前進</b>。要完整控制就外接 8 顆按鍵（12×12 輕觸開關）。</p>
+    <h2>外接按鍵接線</h2>
+    <div class="note warn"><b class="t">⚠ 外接按鍵與外殼還在實機測試</b><p>下表是程式裡設定好的腳位。按鍵到貨組裝驗證後，會再補上照片與外殼檔案。按鍵還沒到，可以先用杜邦線碰 GND 測試。</p></div>
     <div class="tablewrap"><table>
-      <thead><tr><th>功能</th><th>T-Display 腳位</th><th>清道達人</th></tr></thead>
+      <thead><tr><th>功能</th><th>V1.1 腳位</th><th>S3 腳位</th></tr></thead>
       <tbody>
-        <tr><td>左輪 前進</td><td><b>G25</b></td><td>M4</td></tr>
-        <tr><td>左輪 後退</td><td><b>G26</b></td><td>M4</td></tr>
-        <tr><td>右輪 前進</td><td><b>G27</b></td><td>M1</td></tr>
-        <tr><td>右輪 後退</td><td><b>G33</b></td><td>M1</td></tr>
-        <tr><td>滾刷 收球</td><td><b>G21</b></td><td>M2</td></tr>
-        <tr><td>滾刷 吐球</td><td><b>G22</b></td><td>M2</td></tr>
-        <tr><td>後門 ＋</td><td><b>G17</b></td><td>M3</td></tr>
-        <tr><td>後門 −</td><td><b>G13</b></td><td>M3</td></tr>
-        <tr><td>所有按鍵的另一腳</td><td><b>GND</b></td><td>—</td></tr>
+        <tr><td>左輪 ▲ 前進</td><td><b>G25</b></td><td>G1</td></tr>
+        <tr><td>左輪 ▼ 後退</td><td><b>G26</b></td><td>G2</td></tr>
+        <tr><td>右輪 ▲ 前進</td><td><b>G27</b></td><td>G3</td></tr>
+        <tr><td>右輪 ▼ 後退</td><td><b>G33</b></td><td>G10</td></tr>
+        <tr><td>滾刷 收球</td><td><b>G21</b></td><td>G13</td></tr>
+        <tr><td>滾刷 吐球</td><td><b>G22</b></td><td>G16</td></tr>
+        <tr><td>後門 ＋</td><td><b>G17</b></td><td>G17</td></tr>
+        <tr><td>後門 −</td><td><b>G13</b></td><td>G18</td></tr>
+        <tr><td>選單鍵</td><td><b>G32</b></td><td>G11</td></tr>
+        <tr><td>滾刷常開</td><td><b>G15</b></td><td>G12</td></tr>
+        <tr><td>所有按鍵的另一腳</td><td colspan="2"><b>GND</b></td></tr>
       </tbody>
     </table></div>
     <div class="note tip">
       <b class="t">💡 開關為什麼要接「對角線」？</b>
-      <p>輕觸開關 4 支腳兩兩一組、本來就相通，按下時才把兩組接起來。<b>對角線的兩支腳一定屬於不同組</b>，所以一支接 GPIO、對角另一支接 GND，就一定是「按下才導通」。</p>
+      <p>12×12 輕觸開關的 4 支腳兩兩一組、本來就相通，按下時才把兩組接起來。<b>對角線的兩支腳一定屬於不同組</b>，所以一支接 GPIO、對角另一支接 GND，就一定是「按下才導通」。</p>
     </div>
-    <div class="note warn"><b class="t">⚠ 不需要電阻</b><p>程式會開啟晶片內建的上拉電阻。按鍵<b>絕對不要接到 3V3 或 5V</b>。</p></div>
-  </section>
-
-  <!-- 操作 -->
-  <section class="card" id="use">
-    <h2>操作方式</h2>
-    <div class="tablewrap"><table>
-      <thead><tr><th>畫面</th><th>操作</th><th>動作</th></tr></thead>
-      <tbody>
-        <tr><td rowspan="3">選車</td><td>左鍵 短按</td><td>往下選</td></tr>
-        <tr><td>左鍵 長按 1 秒</td><td>重新掃描</td></tr>
-        <tr><td>右鍵 短按</td><td>連線</td></tr>
-        <tr><td rowspan="3">駕駛</td><td>按住按鍵</td><td>對應馬達轉動，放開就停</td></tr>
-        <tr><td>左右前進一起按</td><td>直走；一前一後 = 原地轉</td></tr>
-        <tr><td>側邊 RST 鍵</td><td>重新開機，回到選車畫面（換車用）</td></tr>
-      </tbody>
-    </table></div>
-    <p>斷線時會每 3 秒自動重連同一台車。</p>
+    <div class="note warn"><b class="t">⚠ 不需要電阻</b><p>程式會開啟晶片內建的上拉電阻。按鍵<b>絕對不要接到 3V3 或 5V</b>。接好後到選單「按鍵測試」逐顆確認。</p></div>
   </section>
 
   <!-- FAQ -->
   <section class="card" id="faq">
     <h2>常見問題</h2>
-    <details class="faq"><summary>螢幕全黑</summary><div class="a"><p>第 3 步 <code>User_Setup_Select.h</code> 沒改好，或改完沒存檔。改完要重新上傳。</p></div></details>
-    <details class="faq"><summary>出現「Sketch too big」</summary><div class="a"><p>第 4 步 Partition Scheme 沒改成 <b>Huge APP</b>。</p></div></details>
-    <details class="faq"><summary>上傳卡在 Connecting……</summary><div class="a"><p>按住正面左鍵（BOOT）再上傳；或換一條能傳資料的 USB 線。</p></div></details>
-    <details class="faq"><summary>一直 SCANNING，清單裡找不到車</summary><div class="a"><p>小車有開電嗎？手機原廠 App 是不是還連著？小車一次只能被一個裝置連線。長按左鍵 1 秒重新掃描。</p></div></details>
-    <details class="faq"><summary>連上了但車子不動</summary><div class="a"><p>確認按鍵接的是對角腳、另一腳有接 GND。可以打開 Arduino「序列埠監控窗」（115200），按鍵時會顯示送出的位元組，例如 <code>送出 80</code>。</p></div></details>
+    <details class="faq"><summary>螢幕全黑</summary><div class="a"><p>第 3 步 <code>User_Setup_Select.h</code> 沒改好、改完沒存檔，或選了別塊板子的設定檔。改完要重新上傳。</p></div></details>
+    <details class="faq"><summary>出現「Sketch 太胖了」「本文區已超出開發板的可用空間」</summary><div class="a"><p>Partition Scheme 沒改成 <b>Huge APP</b>。切換過開發板之後要再設一次。</p></div></details>
+    <details class="faq"><summary>出現「This chip is ESP32 not ESP32-S3」</summary><div class="a"><p>插的是 V1.1（ESP32），開發板卻選了 ESP32S3。改選 <b>ESP32 Dev Module</b>，螢幕設定檔也要換成 Setup25。反過來的錯誤訊息就是換成 S3 的設定。</p></div></details>
+    <details class="faq"><summary>出現「'Car' does not name a type」</summary><div class="a"><p>用到舊版程式了。請重新下載最新的 zip，確認資料夾裡有 <code>types.h</code>。</p></div></details>
+    <details class="faq"><summary>選擇小車時找不到車</summary><div class="a"><p>小車有開電嗎？手機原廠 App 或手機網頁遙控器是不是還連著？小車一次只能被一個裝置連線。在空清單畫面按右鍵重新掃描。</p></div></details>
+    <details class="faq"><summary>手機控制頁打不開</summary><div class="a"><p>確認手機的 Wi-Fi 連的是 <code>PowerTech-XXXX</code>（不是學校 Wi-Fi）；跳出「沒有網際網路」要選保持連線；關掉行動數據再開 <code>192.168.4.1</code>。也確認選單裡「Wi-Fi 熱點」是開的。</p></div></details>
+    <details class="faq"><summary>手機顯示「已有其他手機在控制」</summary><div class="a"><p>同一時間只有一支手機能控制。請原本的手機關掉控制頁，等 3 秒再試；或在遙控器選單「換碼踢掉手機」。</p></div></details>
+    <details class="faq"><summary>用手機開車時一頓一頓</summary><div class="a"><p>控制頁右上角會顯示延遲（ms）。數字常常跳到幾百，表示 Wi-Fi 不穩：靠近遙控器一點、避開很多人同時開熱點的地方。訊號斷掉超過 0.4 秒，小車會先停下來保護安全。</p></div></details>
     <details class="faq"><summary>編譯錯誤很多、或開機一直重啟</summary><div class="a"><p>ESP32 開發板版本不是 2.0.17。回到第 2 步改版本。</p></div></details>
+    <details class="faq"><summary>想看遙控器送了什麼指令</summary><div class="a"><p>打開 Arduino「序列埠監控視窗」，速率選 115200。按鍵時會印出 <code>TX 82</code> 這類位元組，開機時也會印出 Wi-Fi 名稱和配對碼。</p></div></details>
   </section>
 
   <footer class="meta" style="text-align:center;margin-top:28px">
-    © 2026 <a href="https://zhengxuetech.github.io/">ZhengXueTech</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant">CC BY-NC-SA 4.0</a>
+    © 2026 <a href="https://zhengxuetech.github.io/">ZhengXueTech</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant">CC BY-NC-SA 4.0</a><br>
+    字型：Noto Sans CJK TC（SIL OFL 1.1）· QR Code：Project Nayuki（MIT）
   </footer>
 </div>
 
