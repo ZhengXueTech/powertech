@@ -189,7 +189,7 @@
       <a class="btn ghost" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">🔧 還沒裝 Arduino IDE？先到這裡下載</a>
       <a class="btn ghost" href="#s1">從第 1 步開始</a>
     </div>
-    <div class="meta">已實測：<b>LILYGO T-Display V1.1（ESP32）</b>。同一份程式也支援 T-Display S3（實機測試中）。</div>
+    <div class="meta">已實測：<b>LILYGO T-Display V1.1（ESP32）</b>與 <b>T-Display S3</b>，同一份程式。外接按鍵與外殼實機測試中。</div>
   </header>
 
   <div class="topbar">
@@ -487,6 +487,9 @@
     <details class="faq"><summary>出現「This chip is ESP32 not ESP32-S3」</summary><div class="a"><p>插的是 V1.1（ESP32），開發板卻選了 ESP32S3。改選 <b>ESP32 Dev Module</b>，螢幕設定檔也要換成 Setup25。反過來的錯誤訊息就是換成 S3 的設定。</p></div></details>
     <details class="faq"><summary>出現「'Car' does not name a type」</summary><div class="a"><p>用到舊版程式了。請重新下載最新的 zip，確認資料夾裡有 <code>types.h</code>。</p></div></details>
     <details class="faq"><summary>選擇小車時找不到車</summary><div class="a"><p>小車有開電嗎？手機原廠 App 或手機網頁遙控器是不是還連著？小車一次只能被一個裝置連線。在空清單畫面按右鍵重新掃描。</p></div></details>
+    <details class="faq"><summary>小車明明開著，卻怎麼掃都掃不到</summary><div class="a"><p>小車的藍牙可能還卡在上一次的連線（例如剛拔掉的另一台遙控器），暫時不對外廣播。<b>把小車關電再開</b>，再重新掃描；用原廠 App 連一下再斷開也可以。</p></div></details>
+    <details class="faq"><summary>S3 上傳完螢幕全黑、按鍵也沒反應</summary><div class="a"><p>多半是 <code>User_Setup_Select.h</code> 打開了錯的那一行（例如 Setup25 下一行的 Setup26 手環設定）。確認整個檔案只有 <code>Setup206_LilyGo_T_Display_S3</code> 那一行前面沒有 <code>//</code>。另外，用 BOOT 鍵進燒錄模式上傳後，要<b>拔插一次 USB</b> 程式才會開始跑。</p></div></details>
+    <details class="faq"><summary>S3 上傳時出現「Could not open COMxx」或連接埠不見了</summary><div class="a"><p>S3 用晶片內建 USB，重開時 COM 號碼會變。拔掉 USB，<b>按住 USB 孔旁下面那顆鍵（BOOT）</b>再插回去，2 秒後放開，到「工具 → 連接埠」重新選新出現的 COM，再上傳。</p></div></details>
     <details class="faq"><summary>手機控制頁打不開</summary><div class="a"><p>確認手機的 Wi-Fi 連的是 <code>PowerTech-XXXX</code>（不是學校 Wi-Fi）；跳出「沒有網際網路」要選保持連線；關掉行動數據再開 <code>192.168.4.1</code>。也確認選單裡「Wi-Fi 熱點」是開的。</p></div></details>
     <details class="faq"><summary>手機顯示「已有其他手機在控制」</summary><div class="a"><p>同一時間只有一支手機能控制。請原本的手機關掉控制頁，等 3 秒再試；或在遙控器選單「換碼踢掉手機」。</p></div></details>
     <details class="faq"><summary>用手機開車時一頓一頓</summary><div class="a"><p>控制頁右上角會顯示延遲（ms）。數字常常跳到幾百，表示 Wi-Fi 不穩：靠近遙控器一點、避開很多人同時開熱點的地方。訊號斷掉超過 0.4 秒，小車會先停下來保護安全。</p></div></details>
